@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${DB_URL}:${DB_PORT:5432}/${DB_NAME}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+
+app:
+  reports-directory-name: reports
+  roles-directory-name: roles
+  excerpts-directory-name: excerpts
+  excerpts-docx-directory-name: excerpts-docx
+  excerpts-csv-directory-name: excerpts-csv
+
+redash:
+  url: ${REDASH_URL}
+  api-key: ${REDASH_API_KEY}
+
+datafactory-excerpt-ceph:
+  http-endpoint: ${CEPH_HTTP_ENDPOINT}
+  access-key: ${CEPH_ACCESS_KEY}
+  secret-key: ${CEPH_SECRET_KEY}
+  bucket: ${CEPH_BUCKET}
+
+s3:
+  config:
+    client:
+      protocol: http
+    options:
+      pathStyleAccess: true
