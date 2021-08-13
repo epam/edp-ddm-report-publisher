@@ -62,6 +62,8 @@ public class ExcerptService {
     var styleFile = Path.of(dir.getPath(), "css", "style.css").toFile();
     try {
       var styleString = FileUtils.readFileToString(styleFile, StandardCharsets.UTF_8);
+      document.head().select("link").remove();
+      document.head().select("style").remove();
       document.head().append("<style>" + styleString + "</style>");
     } catch (Exception e) {
       throw new ExcerptBuildingException("Failed to embed styles into template", e);

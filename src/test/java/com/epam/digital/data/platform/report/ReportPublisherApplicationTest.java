@@ -83,13 +83,13 @@ class ReportPublisherApplicationTest {
   }
 
   @Test
-  void shouldCallExcerptServiceForEachZipFile() {
+  void shouldCallExcerptServiceForEachFolder() {
     when(args.containsOption("excerpts")).thenReturn(true);
     appProperties.setExcerptsDirectoryName(excerptsDirectoryName);
 
     reportPublisherApplication.run(args);
 
-    verify(excerptService, times(3)).loadDir(any());
+    verify(excerptService, times(4)).loadDir(any());
   }
 
   @Test

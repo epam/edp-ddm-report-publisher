@@ -13,7 +13,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import org.apache.commons.io.FileUtils;
+import org.jsoup.Jsoup;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,28 +36,30 @@ class ExcerptServiceTest {
   @Captor
   private ArgumentCaptor<ExcerptTemplate> templateCaptor;
 
-  private static String expectedResult;
   private static final String expectedChecksum = "0a3ba3c196b311ae549ddd1b4445da5b57984ca74d2a671972ee6b1842d3254f";
 
+  private static String expectedResult;
   private static File correctReportFile;
   private static File missingPictureFile;
   private static File missingStyleCssFile;
   private static File correctResultFile;
+  private static File redundantStylesFile;
 
   private ExcerptService service;
 
   @BeforeAll
-  private static void setup() throws IOException, URISyntaxException {
+  static void setup() throws IOException, URISyntaxException {
     correctReportFile = getFile("/excerpts/CorrectExcerpt");
     missingPictureFile = getFile("/excerpts/MissingPictureExcerpt");
     missingStyleCssFile = getFile("/excerpts/MissingStyleCssExcerpt");
     correctResultFile = getFile("/excerpts/correctResult");
+    redundantStylesFile = getFile("/excerpts/RedundantStylesExcerpt");
 
     expectedResult = FileUtils.readFileToString(correctResultFile, StandardCharsets.UTF_8);
   }
 
   @BeforeEach
-  private void init() {
+  void init() {
     service = new ExcerptService(repository);
   }
 
@@ -66,6 +70,18 @@ class ExcerptServiceTest {
     verify(repository).save(templateCaptor.capture());
     var result = templateCaptor.getValue().getTemplate();
     assertThat(result).isEqualTo(expectedResult);
+  }
+
+  @Test
+  void shouldDeleteLinkAndStyleFromHead() {
+    service.loadDir(redundantStylesFile);
+
+    verify(repository).save(templateCaptor.capture());
+    var result = templateCaptor.getValue().getTemplate();
+
+    var resultDocument = Jsoup.parse(result);
+    assertThat(resultDocument.head().select("link")).isEmpty();
+    assertThat(resultDocument.head().select("style")).hasToString("<style></style>");
   }
 
   @Test
@@ -114,6 +130,6 @@ class ExcerptServiceTest {
   }
 
   private static File getFile(String path) throws URISyntaxException {
-    return new File(ExcerptServiceTest.class.getResource(path).toURI());
+    return new File(Objects.requireNonNull(ExcerptServiceTest.class.getResource(path)).toURI());
   }
 }
