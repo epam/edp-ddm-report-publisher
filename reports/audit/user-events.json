@@ -1,0 +1,548 @@
+{
+    "tags": [],
+    "is_archived": false,
+    "updated_at": "2021-08-16T10:57:09.005Z",
+    "is_favorite": false,
+    "user": {
+        "auth_type": "password",
+        "is_disabled": false,
+        "updated_at": "2021-08-16T11:34:07.252Z",
+        "profile_image_url": "https://www.gravatar.com/avatar/6ad193f57f79ac444c3621370da955e9?s=40&d=identicon",
+        "is_invitation_pending": false,
+        "groups": [
+            1,
+            2,
+            3
+        ],
+        "id": 1,
+        "name": "redash-admin",
+        "created_at": "2021-08-13T13:39:43.984Z",
+        "disabled_at": null,
+        "is_email_verified": true,
+        "active_at": "2021-08-16T11:34:02Z",
+        "email": "user@mail.com"
+    },
+    "layout": [],
+    "is_draft": false,
+    "id": 2,
+    "can_edit": true,
+    "user_id": 1,
+    "name": "Журнал дій користувачів",
+    "created_at": "2021-08-16T10:04:17.207Z",
+    "slug": "-_1",
+    "version": 3,
+    "widgets": [
+        {
+            "visualization": {
+                "description": "",
+                "created_at": "2021-08-16T10:04:17.249Z",
+                "updated_at": "2021-08-16T10:57:43.914Z",
+                "id": 6,
+                "query": {
+                    "user": {
+                        "auth_type": "password",
+                        "is_disabled": false,
+                        "updated_at": "2021-08-16T11:34:07.252Z",
+                        "profile_image_url": "https://www.gravatar.com/avatar/6ad193f57f79ac444c3621370da955e9?s=40&d=identicon",
+                        "is_invitation_pending": false,
+                        "groups": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "id": 1,
+                        "name": "redash-admin",
+                        "created_at": "2021-08-13T13:39:43.984Z",
+                        "disabled_at": null,
+                        "is_email_verified": true,
+                        "active_at": "2021-08-16T11:34:02Z",
+                        "email": "user@mail.com"
+                    },
+                    "created_at": "2021-08-16T10:04:17.249Z",
+                    "latest_query_data_id": null,
+                    "schedule": null,
+                    "description": null,
+                    "tags": [],
+                    "updated_at": "2021-08-16T11:08:31.451Z",
+                    "last_modified_by": {
+                        "auth_type": "password",
+                        "is_disabled": false,
+                        "updated_at": "2021-08-16T11:34:07.252Z",
+                        "profile_image_url": "https://www.gravatar.com/avatar/6ad193f57f79ac444c3621370da955e9?s=40&d=identicon",
+                        "is_invitation_pending": false,
+                        "groups": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "id": 1,
+                        "name": "redash-admin",
+                        "created_at": "2021-08-13T13:39:43.984Z",
+                        "disabled_at": null,
+                        "is_email_verified": true,
+                        "active_at": "2021-08-16T11:34:02Z",
+                        "email": "user@mail.com"
+                    },
+                    "options": {
+                        "parameters": [
+                            {
+                                "name": "timestamp",
+                                "title": "Дата та час операції",
+                                "value": {
+                                    "start": "2021-01-01 00:00",
+                                    "end": "2021-12-31 23:59"
+                                },
+                                "parentQueryId": 6,
+                                "type": "datetime-range",
+                                "locals": []
+                            },
+                            {
+                                "name": "request_id",
+                                "title": "Ідентифікатор запита",
+                                "value": "*",
+                                "parentQueryId": 6,
+                                "type": "text",
+                                "locals": []
+                            },
+                            {
+                                "name": "name",
+                                "title": "Ідентифікатор події в БД",
+                                "value": "*",
+                                "parentQueryId": 6,
+                                "type": "text",
+                                "locals": []
+                            },
+                            {
+                                "name": "user_name",
+                                "title": "Користувач",
+                                "global": false,
+                                "value": "*",
+                                "locals": [],
+                                "type": "text",
+                                "parentQueryId": 6
+                            },
+                            {
+                                "name": "action",
+                                "title": "Назва події ",
+                                "multiValuesOptions": {
+                                    "prefix": "'",
+                                    "separator": ",",
+                                    "suffix": "'"
+                                },
+                                "value": [
+                                    "( Всі значення )"
+                                ],
+                                "queryId": 2,
+                                "parentQueryId": 6,
+                                "type": "query",
+                                "locals": []
+                            },
+                            {
+                                "name": "step",
+                                "title": "Кроки виконання операції",
+                                "multiValuesOptions": {
+                                    "prefix": "'",
+                                    "separator": ",",
+                                    "suffix": "'"
+                                },
+                                "value": [
+                                    "( Всі значення )"
+                                ],
+                                "queryId": 1,
+                                "parentQueryId": 6,
+                                "type": "query",
+                                "locals": []
+                            },
+                            {
+                                "name": "table_name",
+                                "title": "Назва сутності",
+                                "global": false,
+                                "value": "*",
+                                "locals": [],
+                                "type": "text",
+                                "parentQueryId": 6
+                            },
+                            {
+                                "name": "row_id",
+                                "title": "ID Об'єкта",
+                                "value": "*",
+                                "parentQueryId": 6,
+                                "type": "text",
+                                "locals": []
+                            },
+                            {
+                                "name": "source_system",
+                                "multiValuesOptions": {
+                                    "prefix": "'",
+                                    "separator": ",",
+                                    "suffix": "'"
+                                },
+                                "global": false,
+                                "value": [
+                                    "( Всі значення )"
+                                ],
+                                "queryId": 3,
+                                "parentQueryId": 6,
+                                "title": "Система виклику БП",
+                                "type": "query",
+                                "locals": []
+                            },
+                            {
+                                "name": "source_business_process",
+                                "title": "Назва бізнес-процесу",
+                                "global": false,
+                                "value": "*",
+                                "locals": [],
+                                "type": "text",
+                                "parentQueryId": 6
+                            },
+                            {
+                                "name": "source_business_process_definition_id",
+                                "title": "Ідентифікатор типу БП",
+                                "global": false,
+                                "value": "*",
+                                "locals": [],
+                                "type": "text",
+                                "parentQueryId": 6
+                            },
+                            {
+                                "name": "source_business_process_instance_id",
+                                "title": "Ідентифікатор активного БП",
+                                "global": false,
+                                "value": "*",
+                                "locals": [],
+                                "type": "text",
+                                "parentQueryId": 6
+                            },
+                            {
+                                "name": "source_business_activity",
+                                "title": "Назва кроку в БП",
+                                "global": false,
+                                "value": "*",
+                                "locals": [],
+                                "type": "text",
+                                "parentQueryId": 6
+                            },
+                            {
+                                "name": "source_business_activity_id",
+                                "title": "Ідентифікатор кроку в БП",
+                                "global": false,
+                                "value": "*",
+                                "locals": [],
+                                "type": "text",
+                                "parentQueryId": 6
+                            }
+                        ]
+                    },
+                    "is_safe": false,
+                    "version": 1,
+                    "query_hash": "ea892a8228a4ef4163b47c4830cbb36c",
+                    "is_archived": false,
+                    "query": "SELECT\n    timestamp as \"Дата та час операції\",\n    request_id as \"Ідентифікатор запита\",\n    name as \"Ідентифікатор події в БД\",\n    application_name as \"Додаток\",\n    user_keycloak_id as \"Ідентифікатор користувач\",\n    user_name as \"Користувач\",\n    action as \"Назва події\",\n    step as \"Кроки виконання операції\",\n    tablename as \"Назва сутності\",\n    row_id as \"ID об'єкта\",\n    translate(fields, '[]\"', '') as \"Поля об'єкта\",\n    source_system as \"Назва системи\",\n    source_application as \"Назва додатку\",\n    source_business_process as \"Назва бізнес процесу\",\n    source_business_process_definition_id as \"Ідентифікатор типу БП\",\n    source_business_process_instance_id as \"Ідентифікатор активного БП\",\n    source_business_activity as \"Назва кроку в БП\",\n    source_business_activity_id as \"Ідентифікатор кроку в БП\"\nFROM audit_event_user_action_v\nWHERE timestamp BETWEEN '{{ timestamp.start }}' AND '{{ timestamp.end }}'\n    AND lower(request_id) ~ CASE WHEN '{{ request_id }}' = '*' THEN '.*' ELSE lower('{{ request_id }}') END\n    AND lower(name) ~ CASE WHEN '{{ name }}' = '*' THEN '.*' ELSE lower('{{ name }}') END\n    AND ( '( Всі значення )' IN ({{ action }})   OR action IN ({{action}}) )\n    AND coalesce(lower(user_name), 'null') ~ CASE WHEN '{{ user_name }}' = '*' THEN '.*' ELSE lower('{{ user_name }}') END\n    AND ( '( Всі значення )' IN ({{ step }}) OR step IN ({{step}}) )\n    AND coalesce(lower(tablename), 'null') ~ CASE WHEN '{{ table_name }}' = '*' THEN '.*' ELSE lower('{{ table_name }}') END\n    AND coalesce(lower(row_id), 'null') ~ CASE WHEN '{{ row_id }}' = '*' THEN '.*' ELSE lower('{{ row_id }}') END\n    AND ( '( Всі значення )' IN ({{source_system}}) OR source_system IN ({{source_system}}) )\n    AND coalesce(lower(source_business_process), 'null') ~ CASE WHEN '{{ source_business_process }}' = '*' THEN '.*' ELSE lower('{{ source_business_process }}') END\n    AND coalesce(lower(source_business_process_definition_id), 'null') ~ CASE WHEN '{{ source_business_process_definition_id }}' = '*' THEN '.*' ELSE lower('{{ source_business_process_definition_id }}') END\n    AND coalesce(lower(source_business_process_instance_id), 'null') ~ CASE WHEN '{{ source_business_process_instance_id }}' = '*' THEN '.*' ELSE lower('{{ source_business_process_instance_id }}') END\n    AND coalesce(lower(source_business_activity), 'null') ~ CASE WHEN '{{ source_business_activity }}' = '*' THEN '.*' ELSE lower('{{ source_business_activity }}') END\n    AND coalesce(lower(source_business_activity_id), 'null') ~ CASE WHEN '{{ source_business_activity_id }}' = '*' THEN '.*' ELSE lower('{{ source_business_activity_id }}') END\nORDER BY timestamp DESC\n",
+                    "api_key": "KvZgUfQclO7YVbz51wuptRlyleS0EP7uQAWv2sJC",
+                    "is_draft": false,
+                    "id": 6,
+                    "data_source_id": 1,
+                    "name": "Аудит подій користувача"
+                },
+                "type": "TABLE",
+                "options": {
+                    "itemsPerPage": 25,
+                    "columns": [
+                        {
+                            "linkUrlTemplate": "{{ @ }}",
+                            "name": "Дата та час операції",
+                            "title": "Дата та час операції",
+                            "imageUrlTemplate": "{{ @ }}",
+                            "linkOpenInNewTab": true,
+                            "linkTextTemplate": "{{ @ }}",
+                            "allowSearch": false,
+                            "allowHTML": true,
+                            "imageTitleTemplate": "{{ @ }}",
+                            "imageWidth": "",
+                            "visible": true,
+                            "alignContent": "right",
+                            "imageHeight": "",
+                            "order": 100000,
+                            "displayAs": "datetime",
+                            "dateTimeFormat": "DD/MM/YY HH:mm",
+                            "linkTitleTemplate": "{{ @ }}",
+                            "booleanValues": [
+                                "false",
+                                "true"
+                            ],
+                            "type": "datetime",
+                            "highlightLinks": false
+                        },
+                        {
+                            "linkUrlTemplate": "{{ @ }}",
+                            "name": "Ідентифікатор запита",
+                            "title": "Ідентифікатор запита",
+                            "imageUrlTemplate": "{{ @ }}",
+                            "linkOpenInNewTab": true,
+                            "linkTextTemplate": "{{ @ }}",
+                            "allowSearch": false,
+                            "allowHTML": true,
+                            "imageTitleTemplate": "{{ @ }}",
+                            "imageWidth": "",
+                            "visible": true,
+                            "alignContent": "left",
+                            "imageHeight": "",
+                            "order": 100001,
+                            "displayAs": "string",
+                            "linkTitleTemplate": "{{ @ }}",
+                            "booleanValues": [
+                                "false",
+                                "true"
+                            ],
+                            "type": "string",
+                            "highlightLinks": false
+                        },
+                        {
+                            "linkUrlTemplate": "{{ @ }}",
+                            "name": "Ідентифікатор події в БД",
+                            "title": "Ідентифікатор події в БД",
+                            "imageUrlTemplate": "{{ @ }}",
+                            "linkOpenInNewTab": true,
+                            "linkTextTemplate": "{{ @ }}",
+                            "allowSearch": false,
+                            "allowHTML": true,
+                            "imageTitleTemplate": "{{ @ }}",
+                            "imageWidth": "",
+                            "visible": true,
+                            "alignContent": "left",
+                            "imageHeight": "",
+                            "order": 100002,
+                            "displayAs": "string",
+                            "linkTitleTemplate": "{{ @ }}",
+                            "booleanValues": [
+                                "false",
+                                "true"
+                            ],
+                            "type": "string",
+                            "highlightLinks": false
+                        },
+                        {
+                            "linkUrlTemplate": "{{ @ }}",
+                            "name": "Додаток",
+                            "title": "Додаток",
+                            "imageUrlTemplate": "{{ @ }}",
+                            "linkOpenInNewTab": true,
+                            "linkTextTemplate": "{{ @ }}",
+                            "allowSearch": false,
+                            "allowHTML": true,
+                            "imageTitleTemplate": "{{ @ }}",
+                            "imageWidth": "",
+                            "visible": true,
+                            "alignContent": "left",
+                            "imageHeight": "",
+                            "order": 100003,
+                            "displayAs": "string",
+                            "linkTitleTemplate": "{{ @ }}",
+                            "booleanValues": [
+                                "false",
+                                "true"
+                            ],
+                            "type": "string",
+                            "highlightLinks": false
+                        },
+                        {
+                            "linkUrlTemplate": "{{ @ }}",
+                            "name": "Ідентифікатор користувач",
+                            "title": "Ідентифікатор користувач",
+                            "imageUrlTemplate": "{{ @ }}",
+                            "linkOpenInNewTab": true,
+                            "linkTextTemplate": "{{ @ }}",
+                            "allowSearch": false,
+                            "allowHTML": true,
+                            "imageTitleTemplate": "{{ @ }}",
+                            "imageWidth": "",
+                            "visible": true,
+                            "alignContent": "left",
+                            "imageHeight": "",
+                            "order": 100004,
+                            "displayAs": "string",
+                            "linkTitleTemplate": "{{ @ }}",
+                            "booleanValues": [
+                                "false",
+                                "true"
+                            ],
+                            "type": "string",
+                            "highlightLinks": false
+                        },
+                        {
+                            "linkUrlTemplate": "{{ @ }}",
+                            "name": "Користувач",
+                            "title": "Користувач",
+                            "imageUrlTemplate": "{{ @ }}",
+                            "linkOpenInNewTab": true,
+                            "linkTextTemplate": "{{ @ }}",
+                            "allowSearch": false,
+                            "allowHTML": true,
+                            "imageTitleTemplate": "{{ @ }}",
+                            "imageWidth": "",
+                            "visible": true,
+                            "alignContent": "left",
+                            "imageHeight": "",
+                            "order": 100005,
+                            "displayAs": "string",
+                            "linkTitleTemplate": "{{ @ }}",
+                            "booleanValues": [
+                                "false",
+                                "true"
+                            ],
+                            "type": "string",
+                            "highlightLinks": false
+                        },
+                        {
+                            "linkUrlTemplate": "{{ @ }}",
+                            "name": "Назва події",
+                            "title": "Назва події",
+                            "imageUrlTemplate": "{{ @ }}",
+                            "linkOpenInNewTab": true,
+                            "linkTextTemplate": "{{ @ }}",
+                            "allowSearch": false,
+                            "allowHTML": true,
+                            "imageTitleTemplate": "{{ @ }}",
+                            "imageWidth": "",
+                            "visible": true,
+                            "alignContent": "left",
+                            "imageHeight": "",
+                            "order": 100006,
+                            "displayAs": "string",
+                            "linkTitleTemplate": "{{ @ }}",
+                            "booleanValues": [
+                                "false",
+                                "true"
+                            ],
+                            "type": "string",
+                            "highlightLinks": false
+                        }
+                    ]
+                },
+                "name": "Table"
+            },
+            "text": "",
+            "created_at": "2021-08-16T10:57:43.914Z",
+            "updated_at": "2021-08-16T11:01:35.741Z",
+            "options": {
+                "parameterMappings": {
+                    "source_business_activity": {
+                        "type": "dashboard-level",
+                        "mapTo": "source_business_activity",
+                        "name": "source_business_activity",
+                        "value": null,
+                        "title": ""
+                    },
+                    "source_business_process_instance_id": {
+                        "type": "dashboard-level",
+                        "mapTo": "source_business_process_instance_id",
+                        "name": "source_business_process_instance_id",
+                        "value": null,
+                        "title": ""
+                    },
+                    "name": {
+                        "type": "dashboard-level",
+                        "mapTo": "name",
+                        "name": "name",
+                        "value": null,
+                        "title": ""
+                    },
+                    "source_business_process_definition_id": {
+                        "type": "dashboard-level",
+                        "mapTo": "source_business_process_definition_id",
+                        "name": "source_business_process_definition_id",
+                        "value": null,
+                        "title": ""
+                    },
+                    "source_system": {
+                        "type": "dashboard-level",
+                        "mapTo": "source_system",
+                        "name": "source_system",
+                        "value": null,
+                        "title": ""
+                    },
+                    "timestamp": {
+                        "type": "dashboard-level",
+                        "mapTo": "timestamp",
+                        "name": "timestamp",
+                        "value": null,
+                        "title": ""
+                    },
+                    "step": {
+                        "type": "dashboard-level",
+                        "mapTo": "step",
+                        "name": "step",
+                        "value": null,
+                        "title": ""
+                    },
+                    "table_name": {
+                        "type": "dashboard-level",
+                        "mapTo": "table_name",
+                        "name": "table_name",
+                        "value": null,
+                        "title": ""
+                    },
+                    "source_business_process": {
+                        "type": "dashboard-level",
+                        "mapTo": "source_business_process",
+                        "name": "source_business_process",
+                        "value": null,
+                        "title": ""
+                    },
+                    "request_id": {
+                        "type": "dashboard-level",
+                        "mapTo": "request_id",
+                        "name": "request_id",
+                        "value": null,
+                        "title": ""
+                    },
+                    "action": {
+                        "type": "dashboard-level",
+                        "mapTo": "action",
+                        "name": "action",
+                        "value": null,
+                        "title": ""
+                    },
+                    "row_id": {
+                        "type": "dashboard-level",
+                        "mapTo": "row_id",
+                        "name": "row_id",
+                        "value": null,
+                        "title": ""
+                    },
+                    "source_business_activity_id": {
+                        "type": "dashboard-level",
+                        "mapTo": "source_business_activity_id",
+                        "name": "source_business_activity_id",
+                        "value": null,
+                        "title": ""
+                    },
+                    "user_name": {
+                        "type": "dashboard-level",
+                        "mapTo": "user_name",
+                        "name": "user_name",
+                        "value": null,
+                        "title": ""
+                    }
+                },
+                "isHidden": false,
+                "position": {
+                    "autoHeight": false,
+                    "sizeX": 6,
+                    "sizeY": 14,
+                    "maxSizeY": 1000,
+                    "maxSizeX": 6,
+                    "minSizeY": 1,
+                    "minSizeX": 2,
+                    "col": 0,
+                    "row": 0
+                }
+            },
+            "dashboard_id": 2,
+            "width": 1,
+            "id": 3
+        }
+    ],
+    "dashboard_filters_enabled": true
+}
