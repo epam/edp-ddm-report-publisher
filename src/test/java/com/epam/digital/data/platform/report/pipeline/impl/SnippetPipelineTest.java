@@ -1,6 +1,6 @@
 package com.epam.digital.data.platform.report.pipeline.impl;
 
-import static com.epam.digital.data.platform.report.util.TestUtils.mockContext;
+import static com.epam.digital.data.platform.report.util.TestUtils.context;
 import static java.util.List.of;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -29,7 +29,7 @@ public class SnippetPipelineTest {
     var dir = ResourceUtils.getFile("classpath:pipeline/admin/snippets");
     var files = of(dir);
 
-    pipeline.process(files, mockContext());
+    pipeline.process(files, context());
 
     verify(service).publish(any());
   }

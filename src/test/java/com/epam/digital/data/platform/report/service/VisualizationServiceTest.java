@@ -1,5 +1,7 @@
 package com.epam.digital.data.platform.report.service;
 
+import static com.epam.digital.data.platform.report.util.TestUtils.query;
+import static com.epam.digital.data.platform.report.util.TestUtils.visualization;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -10,6 +12,7 @@ import static org.mockito.Mockito.when;
 import com.epam.digital.data.platform.report.client.VisualizationClient;
 import com.epam.digital.data.platform.report.model.Query;
 import com.epam.digital.data.platform.report.model.Visualization;
+import com.epam.digital.data.platform.report.util.TestUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -34,7 +37,7 @@ public class VisualizationServiceTest {
     @Test
     void shouldUpdateDefaultVisualization() {
         when(visualizationClient.updateVisualization(anyInt(), any())).thenReturn(mockResponse());
-        var input = mockQueryWithOneVisualization(tableVisualization());
+        var input = mockQueryWithOneVisualization(visualization("TABLE"));
 
         visualizationService.save(input);
 
@@ -68,7 +71,7 @@ public class VisualizationServiceTest {
     @Test
     void shouldNotUpdateDefaultVisualizationIfNoTableVisualizations() {
         when(visualizationClient.createVisualization(any())).thenReturn(mockResponse());
-        var input = mockQueryWithOneVisualization(otherVisualization());
+        var input = mockQueryWithOneVisualization(visualization("OTHER"));
 
         visualizationService.save(input);
 
@@ -83,7 +86,7 @@ public class VisualizationServiceTest {
     }
 
     private Map<Query, List<Visualization>> mockQueryWithOneVisualization(Visualization visualization) {
-        var query = mockQuery();
+        var query = query("first");
         var visualizations = new ArrayList<Visualization>();
 
         visualizations.add(visualization);
@@ -93,8 +96,8 @@ public class VisualizationServiceTest {
     }
 
     private Map<Query, List<Visualization>> mockQueryWithTwoVisualizations() {
-        var query = mockQuery();
-        var first = tableVisualization();
+        var query = query("first");
+        var first = visualization("TABLE");
         var second = new Visualization();
         var visualizations = new ArrayList<Visualization>();
 
@@ -104,26 +107,6 @@ public class VisualizationServiceTest {
         second.setId(3);
 
         return Map.of(query, visualizations);
-    }
-
-    private Query mockQuery() {
-        var query = new Query();
-        query.setId(1);
-        return query;
-    }
-
-    private Visualization tableVisualization() {
-        var visualization = new Visualization();
-        visualization.setId(1);
-        visualization.setType("TABLE");
-        return visualization;
-    }
-
-    private Visualization otherVisualization() {
-        var visualization = new Visualization();
-        visualization.setId(1);
-        visualization.setType("OTHER");
-        return visualization;
     }
 
     private ResponseEntity<Visualization> mockResponse() {

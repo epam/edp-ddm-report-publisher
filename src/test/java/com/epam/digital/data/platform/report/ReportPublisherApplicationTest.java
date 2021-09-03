@@ -1,6 +1,6 @@
 package com.epam.digital.data.platform.report;
 
-import static java.util.List.of;
+import static com.epam.digital.data.platform.report.util.TestUtils.dataSources;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -121,13 +121,7 @@ class ReportPublisherApplicationTest {
   }
 
   private ResponseEntity<List<DataSource>> mockResponse(String name) {
-    return new ResponseEntity<>(of(mockDataSource(name)), HttpStatus.OK);
-  }
-
-  private DataSource mockDataSource(String name) {
-    var dataSource = new DataSource();
-    dataSource.setId(1);
-    dataSource.setName(name);
-    return dataSource;
+    return new ResponseEntity<>(dataSources(name), HttpStatus.OK);
   }
 }
+

@@ -24,8 +24,7 @@
 			<!-- do not calc coverage for the classes without BL: -->
 			**/model/**/*,
 			**/config/**/*,
-			**/client/**/*,
-			**/**/*
+			**/client/**/*
 		</sonar.coverage.exclusions>
 
 	</properties>

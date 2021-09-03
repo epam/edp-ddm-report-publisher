@@ -1,6 +1,7 @@
 package com.epam.digital.data.platform.report.pipeline.impl;
 
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.io.FilenameUtils.isExtension;
 
 import com.epam.digital.data.platform.report.model.Context;
 import com.epam.digital.data.platform.report.model.Group;
@@ -14,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.util.List;
 import java.util.function.Predicate;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -22,8 +24,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class RolesPipeline extends AbstractPipeline {
 
-  private static final Predicate<? super File> OFFICER_ROLE_FILTER =
-      file -> !file.isDirectory() && file.getName().equalsIgnoreCase("officer.yaml");
+  private final Predicate<? super File> OFFICER_ROLE_FILTER =
+      file -> !file.isDirectory() && file.getName().contains("officer")
+          && isExtension(file.getName(), "yaml", "yml");
+
   private final List<String> defaultGroups = List.of("admin", "default", "auditor");
 
   private final GroupService groupService;

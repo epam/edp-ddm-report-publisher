@@ -3,13 +3,10 @@ package com.epam.digital.data.platform.report.pipeline.impl;
 import static java.util.List.of;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
-import static com.epam.digital.data.platform.report.util.TestUtils.mockContext;
+import static com.epam.digital.data.platform.report.util.TestUtils.context;
 
-import com.epam.digital.data.platform.report.model.Query;
-import com.epam.digital.data.platform.report.model.Visualization;
 import com.epam.digital.data.platform.report.service.QueryService;
 import java.io.IOException;
-import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,7 +29,7 @@ public class UtilQueryPipelineTest {
         var dir = ResourceUtils.getFile("classpath:pipeline/admin/queries");
         var files = of(dir);
 
-        utilQueryPipeline.process(files, mockContext());
+        utilQueryPipeline.process(files, context());
 
         verify(queryService).archive(any());
         verify(queryService).save(any(), any());
