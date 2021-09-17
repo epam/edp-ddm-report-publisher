@@ -72,7 +72,7 @@ class ReportPublisherApplicationTest {
     when(args.containsOption("reports")).thenReturn(true);
     when(skippedPipeline.isApplicable(any())).thenReturn(false);
     when(appliedPipeline.isApplicable(any())).thenReturn(true);
-    when(dataSourceClient.getDataSources()).thenReturn(mockResponse("admin registry"));
+    when(dataSourceClient.getDataSources()).thenReturn(mockResponse("registry"));
 
     reportPublisherApplication.run(args);
 

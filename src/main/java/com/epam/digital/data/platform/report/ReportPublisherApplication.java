@@ -1,5 +1,6 @@
 package com.epam.digital.data.platform.report;
 
+import static com.epam.digital.data.platform.report.service.RoleService.ADMIN_REGISTRY_NAME;
 import static com.epam.digital.data.platform.report.service.RoleService.ADMIN_ROLE_NAME;
 import static com.epam.digital.data.platform.report.service.RoleService.AUDITOR_ROLE_NAME;
 import static com.epam.digital.data.platform.report.util.IOUtils.getFileList;
@@ -18,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -83,7 +85,7 @@ public class ReportPublisherApplication implements ApplicationRunner {
     for (File reportsDir : getDirectories(appProperties.getReportsDirectoryName())) {
       log.info("Processing {} directory", reportsDir.getName());
 
-      getDataSourceId(dataSources, reportsDir.getName())
+      getDataSource(dataSources, reportsDir.getName())
           .ifPresent(dataSourceId -> {
             var context = createContext(dataSourceId);
             var files = getFiles(reportsDir);
@@ -121,9 +123,17 @@ public class ReportPublisherApplication implements ApplicationRunner {
     return context;
   }
 
-  private Optional<Integer> getDataSourceId(List<DataSource> dataSources, String name) {
+  private Optional<Integer> getDataSource(List<DataSource> dataSources, String name) {
+    return name.equals(ADMIN_ROLE_NAME)
+        ? getDataSourceId(dataSources,
+            dataSource -> dataSource.getName().equalsIgnoreCase(ADMIN_REGISTRY_NAME))
+        : getDataSourceId(dataSources,
+            dataSource -> dataSource.getName().toLowerCase().contains(name));
+  }
+
+  private Optional<Integer> getDataSourceId(List<DataSource> dataSources, Predicate<? super DataSource> rule) {
     return dataSources.stream()
-        .filter(dataSource -> dataSource.getName().toLowerCase().contains(name))
+        .filter(rule)
         .map(DataSource::getId)
         .findFirst();
   }
