@@ -47,7 +47,7 @@ public class UserServiceTest {
 
     instance.createUser(role);
 
-    verify(statement).setString(1, "analytics_officer");
+    verify(statement).setString(1, "\"analytics_officer\"");
     verify(statement).setString(2, "password");
     verify(statement).execute();
   }

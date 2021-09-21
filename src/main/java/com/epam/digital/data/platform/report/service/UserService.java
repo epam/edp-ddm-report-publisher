@@ -23,7 +23,7 @@ public class UserService {
   public void createUser(Role role) {
     try (Connection connection = dataSource.getConnection();
         PreparedStatement statement = connection.prepareCall(CREATE_ROLE)) {
-      statement.setString(1, "analytics_" + role.getName());
+      statement.setString(1, buildUserNameFor(role));
       statement.setString(2, role.getPassword());
       statement.execute();
     } catch (SQLException e) {
@@ -42,6 +42,10 @@ public class UserService {
   }
 
   private String buildDeleteQueryFor(Group group) {
-    return "DROP USER analytics_" + group.getName() + ";";
+    return "DROP USER \"analytics_" + group.getName() + "\";";
+  }
+
+  private String buildUserNameFor(Role role) {
+    return "\"analytics_" + role.getName() + "\"";
   }
 }

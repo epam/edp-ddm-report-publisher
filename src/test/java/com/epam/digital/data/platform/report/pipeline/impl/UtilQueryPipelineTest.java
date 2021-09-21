@@ -26,7 +26,7 @@ public class UtilQueryPipelineTest {
 
     @Test
     void shouldSuccessfullyArchiveAndPublishDashboard() throws IOException {
-        var dir = ResourceUtils.getFile("classpath:pipeline/admin/queries");
+        var dir = ResourceUtils.getFile("classpath:pipeline/officer/queries");
         var files = of(dir);
 
         utilQueryPipeline.process(files, context());
