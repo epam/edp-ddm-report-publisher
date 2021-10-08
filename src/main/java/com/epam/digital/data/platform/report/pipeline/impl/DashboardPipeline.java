@@ -10,7 +10,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.util.List;
 import java.util.function.Predicate;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import com.epam.digital.data.platform.report.model.Context;
@@ -23,6 +24,8 @@ public class DashboardPipeline extends AbstractPipeline {
     private final Archiver archiver;
     private final Publisher publisher;
 
+    private final Logger log = LoggerFactory.getLogger(DashboardPipeline.class);
+
     private final Predicate<? super File> DASHBOARD_FILTER =
         file -> !file.isDirectory() && file.getName().endsWith(".json");
 
@@ -34,6 +37,7 @@ public class DashboardPipeline extends AbstractPipeline {
 
     public void process(List<File> files, Context context) {
         for (Dashboard dashboard : getDashboards(files)) {
+            log.info("Processing {} dashboard", dashboard.getName());
             archiver.archive(dashboard);
             publisher.publish(dashboard, context);
         }

@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import com.epam.digital.data.platform.report.client.QueryClient;
 import com.epam.digital.data.platform.report.model.Context;
@@ -18,6 +20,8 @@ public class QueryService {
 
     private final QueryClient queryClient;
     private final VisualizationService visualizationService;
+
+    private final Logger log = LoggerFactory.getLogger(QueryService.class);
 
     public QueryService(QueryClient queryClient,
         VisualizationService visualizationService) {
@@ -61,6 +65,7 @@ public class QueryService {
         Map<Query, List<Visualization>> created = new HashMap<>();
 
         for (Query query : queryToVisualizations.keySet()) {
+            log.info("Processing query {}", query.getName());
             prepareQuery(query, context);
             Query published = handleResponse(queryClient.postQuery(query));
             created.put(published, queryToVisualizations.get(query));

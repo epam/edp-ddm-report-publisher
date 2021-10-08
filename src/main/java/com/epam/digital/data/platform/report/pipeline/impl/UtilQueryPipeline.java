@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import com.epam.digital.data.platform.report.model.Context;
@@ -26,6 +28,8 @@ import com.epam.digital.data.platform.report.util.IOUtils;
 @Order(PipelineOrder.UTIL_QUERY_PIPELINE)
 @Component
 public class UtilQueryPipeline extends AbstractPipeline {
+
+  private final Logger log = LoggerFactory.getLogger(UtilQueryPipeline.class);
 
   private final QueryService queryService;
 
@@ -38,6 +42,7 @@ public class UtilQueryPipeline extends AbstractPipeline {
   }
 
   public void process(List<File> files, Context context) {
+    log.info("Processing parameter queries for dataSource with id {}", context.getDataSourceId());
     var queries = getUtilQueries(files);
 
     queryService.archive(queries);

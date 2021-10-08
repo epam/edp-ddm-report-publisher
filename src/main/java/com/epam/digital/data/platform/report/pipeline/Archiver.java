@@ -6,6 +6,8 @@ import static com.epam.digital.data.platform.report.util.ResponseHandler.handleR
 import com.epam.digital.data.platform.report.service.QueryService;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import com.epam.digital.data.platform.report.client.DashboardClient;
 import com.epam.digital.data.platform.report.model.Dashboard;
@@ -19,6 +21,8 @@ public class Archiver {
     private final DashboardClient dashboardClient;
     private final QueryService queryService;
 
+    private final Logger log = LoggerFactory.getLogger(Archiver.class);
+
     public Archiver(DashboardClient dashboardClient, QueryService queryService) {
         this.dashboardClient = dashboardClient;
         this.queryService = queryService;
@@ -27,6 +31,7 @@ public class Archiver {
     public void archive(Dashboard dashboard) {
         archiveDashboard(dashboard.getName());
         archiveQueries(getQueries(dashboard));
+        log.info("Successfully archived {}", dashboard.getName());
     }
 
     private void archiveDashboard(String name) {
