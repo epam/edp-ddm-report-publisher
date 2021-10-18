@@ -28,6 +28,7 @@ public class ExcerptService {
     try {
       var htmlString = FileUtils.readFileToString(indexFile, StandardCharsets.UTF_8);
       var document = Jsoup.parse(htmlString);
+      document.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
 
       embedImagesToHtml(document, dir);
       embedStyleToHtml(document, dir);
@@ -61,9 +62,11 @@ public class ExcerptService {
   private void embedStyleToHtml(Document document, File dir) {
     var styleFile = Path.of(dir.getPath(), "css", "style.css").toFile();
     try {
-      var styleString = FileUtils.readFileToString(styleFile, StandardCharsets.UTF_8);
       document.head().select("link").remove();
       document.head().select("style").remove();
+      
+      var styleString = FileUtils.readFileToString(styleFile, StandardCharsets.UTF_8);
+      styleString += "\n* { font-family: Helvetica; }\n";
       document.head().append("<style>" + styleString + "</style>");
     } catch (Exception e) {
       throw new ExcerptBuildingException("Failed to embed styles into template", e);

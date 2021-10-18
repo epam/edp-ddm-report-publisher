@@ -36,7 +36,7 @@ class ExcerptServiceTest {
   @Captor
   private ArgumentCaptor<ExcerptTemplate> templateCaptor;
 
-  private static final String expectedChecksum = "0a3ba3c196b311ae549ddd1b4445da5b57984ca74d2a671972ee6b1842d3254f";
+  private static final String expectedChecksum = "e5efd6c6e1cd1aeed1ae2448fb241b6e15e97d3ec7fac90c1de6ae60b810615c";
 
   private static String expectedResult;
   private static File correctReportFile;
@@ -73,7 +73,7 @@ class ExcerptServiceTest {
   }
 
   @Test
-  void shouldDeleteLinkAndStyleFromHead() {
+  void shouldDeleteLinkAndStyleFromHeadAndAddFont() {
     service.loadDir(redundantStylesFile);
 
     verify(repository).save(templateCaptor.capture());
@@ -81,7 +81,9 @@ class ExcerptServiceTest {
 
     var resultDocument = Jsoup.parse(result);
     assertThat(resultDocument.head().select("link")).isEmpty();
-    assertThat(resultDocument.head().select("style")).hasToString("<style></style>");
+    assertThat(resultDocument.head().select("style")).hasToString("<style>\n"
+        + "* { font-family: Helvetica; }\n"
+        + "</style>");
   }
 
   @Test
