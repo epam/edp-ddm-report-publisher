@@ -36,7 +36,7 @@ class ExcerptServiceTest {
   @Captor
   private ArgumentCaptor<ExcerptTemplate> templateCaptor;
 
-  private static final String expectedChecksum = "e5efd6c6e1cd1aeed1ae2448fb241b6e15e97d3ec7fac90c1de6ae60b810615c";
+  private static final String expectedChecksum = "dccebf6047bf21908fd7ae0fb1c64715f7b8cb3a9f0e51f4df3dec9800b596b8";
 
   private static String expectedResult;
   private static File correctReportFile;
@@ -82,7 +82,7 @@ class ExcerptServiceTest {
     var resultDocument = Jsoup.parse(result);
     assertThat(resultDocument.head().select("link")).isEmpty();
     assertThat(resultDocument.head().select("style")).hasToString("<style>\n"
-        + "* { font-family: Helvetica; }\n"
+        + "* { font-family: DejaVu Sans; }\n"
         + "</style>");
   }
 

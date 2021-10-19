@@ -7,7 +7,7 @@
   margin-right: auto;
   height: 150px;
 }
-* { font-family: Helvetica; }
+* { font-family: DejaVu Sans; }
 </style>
  </head> 
  <body> 
