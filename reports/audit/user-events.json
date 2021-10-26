@@ -88,10 +88,7 @@
                             {
                                 "name": "timestamp",
                                 "title": "Дата та час операції",
-                                "value": {
-                                    "start": "2021-01-01 00:00",
-                                    "end": "2021-12-31 23:59"
-                                },
+                                "value": "d_today",
                                 "parentQueryId": 6,
                                 "type": "datetime-range",
                                 "locals": []
