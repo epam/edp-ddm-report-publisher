@@ -64,7 +64,7 @@ class ReportPublisherApplicationTest {
     appProperties.setReportsDirectoryName(reportsDirectoryName);
 
     reportPublisherApplication = new ReportPublisherApplication(
-        appProperties, dataSourceClient, pipelines, excerptService, roleService);
+        appProperties, dataSourceClient, pipelines, excerptService, roleService, "registry");
   }
 
   @Test

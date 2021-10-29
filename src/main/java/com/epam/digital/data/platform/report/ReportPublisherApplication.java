@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -42,14 +43,18 @@ public class ReportPublisherApplication implements ApplicationRunner {
   private final ExcerptService excerptService;
   private final RoleService roleService;
 
+  private final String dataSourcePrefix;
+
   public ReportPublisherApplication(AppProperties appProperties,
       DataSourceClient dataSourceClient, List<AbstractPipeline> pipelines,
-      ExcerptService excerptService, RoleService roleService) {
+      ExcerptService excerptService, RoleService roleService,
+      @Value("${DB_NAME}") String prefix) {
     this.appProperties = appProperties;
     this.dataSourceClient = dataSourceClient;
     this.pipelines = pipelines;
     this.excerptService = excerptService;
     this.roleService = roleService;
+    this.dataSourcePrefix = prefix;
   }
 
   public static void main(String[] args) {
@@ -128,7 +133,7 @@ public class ReportPublisherApplication implements ApplicationRunner {
         ? getDataSourceId(dataSources,
             dataSource -> dataSource.getName().equalsIgnoreCase(ADMIN_REGISTRY_NAME))
         : getDataSourceId(dataSources,
-            dataSource -> dataSource.getName().toLowerCase().contains(name));
+            dataSource -> dataSource.getName().equalsIgnoreCase(dataSourceNameForRole(name)));
   }
 
   private Optional<Integer> getDataSourceId(List<DataSource> dataSources, Predicate<? super DataSource> rule) {
@@ -136,6 +141,10 @@ public class ReportPublisherApplication implements ApplicationRunner {
         .filter(rule)
         .map(DataSource::getId)
         .findFirst();
+  }
+
+  private String dataSourceNameForRole(String role) {
+    return dataSourcePrefix + "_" + role;
   }
 
   private List<File> getDirectories(String root) {
