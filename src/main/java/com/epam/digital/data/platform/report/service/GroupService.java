@@ -38,10 +38,12 @@ public class GroupService {
     client.deleteGroup(group.getId());
   }
 
-  public void associate(Group group, DataSource dataSource) {
-    var association = new DataSourceAssociation();
-    association.setDataSourceId(dataSource.getId());
-    client.associateGroupWithDataSource(group.getId(), association);
+  public void associate(DataSource dataSource, Group... groups) {
+    for (var group : groups) {
+      var association = new DataSourceAssociation();
+      association.setDataSourceId(dataSource.getId());
+      client.associateGroupWithDataSource(group.getId(), association);
+    }
   }
 
   public void deleteAssociation(Group group, DataSource dataSource) {

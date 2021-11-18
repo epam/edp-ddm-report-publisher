@@ -104,7 +104,7 @@ public class GroupServiceTest {
     var association = new DataSourceAssociation();
     association.setDataSourceId(1);
 
-    instance.associate(group, dataSource);
+    instance.associate(dataSource, group);
 
     verify(client).associateGroupWithDataSource(1, association);
   }

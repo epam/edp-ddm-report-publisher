@@ -1,8 +1,10 @@
 package com.epam.digital.data.platform.report.service;
 
 import static com.epam.digital.data.platform.report.util.TestUtils.dataSources;
+import static com.epam.digital.data.platform.report.util.TestUtils.groups;
 import static java.util.Collections.emptyList;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -91,9 +93,13 @@ public class RoleServiceTest {
 
   @Test
   void shouldCreateRole() {
+    var groups = groups("admin", "default");
+    when(groupService.getGroups()).thenReturn(groups);
+
     var role = new Role();
     role.setName("officer");
 
+    instance.setup();
     instance.create(role);
 
     verify(dataSourceService).buildDataSource(role);
@@ -101,6 +107,26 @@ public class RoleServiceTest {
     verify(groupService).createGroup(any());
     verify(groupService).deleteAssociation(any(), any());
     verify(groupService).associate(any(), any());
+    verify(userService).createUser(role);
+  }
+
+  @Test
+  void shouldAssociateWithAdminGroup() {
+    var groups = groups("admin", "default", "officer");
+    when(groupService.getGroups()).thenReturn(groups);
+    when(groupService.createGroup(any())).thenReturn(groups.get(2));
+
+    var role = new Role();
+    role.setName("officer");
+
+    instance.setup();
+    instance.create(role);
+
+    verify(dataSourceService).buildDataSource(role);
+    verify(dataSourceService).createDataSource(any());
+    verify(groupService).createGroup(any());
+    verify(groupService).deleteAssociation(any(), any());
+    verify(groupService).associate(any(), eq(groups.get(2)), eq(groups.get(0)));
     verify(userService).createUser(role);
   }
 

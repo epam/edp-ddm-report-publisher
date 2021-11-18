@@ -29,6 +29,7 @@ public class RoleService {
   private final Map<String, String> rolePasswordMap = new HashMap<>();
 
   private Group defaultGroup;
+  private Group adminGroup;
 
   public RoleService(
       @Value("${PWD_ADMIN}") String adminPassword,
@@ -47,11 +48,19 @@ public class RoleService {
   @PostConstruct
   void setup() {
     setDefaultGroup();
+    setAdminGroup();
   }
 
   private void setDefaultGroup() {
     defaultGroup = groupService.getGroups().stream()
         .filter(group -> group.getName().contains("default"))
+        .findFirst()
+        .orElseThrow(() -> new NoGroupFoundException("No default group found"));
+  }
+
+  private void setAdminGroup() {
+    adminGroup = groupService.getGroups().stream()
+        .filter(group -> group.getName().contains("admin"))
         .findFirst()
         .orElseThrow(() -> new NoGroupFoundException("No default group found"));
   }
@@ -69,7 +78,7 @@ public class RoleService {
       var createdGroup = groupService.createGroup(group);
       var createdDataSource = dataSourceService.createDataSource(dataSource);
       groupService.deleteAssociation(defaultGroup, createdDataSource);
-      groupService.associate(createdGroup, createdDataSource);
+      groupService.associate(createdDataSource, createdGroup, adminGroup);
     }
   }
 
@@ -108,11 +117,11 @@ public class RoleService {
   }
 
   private void createAndAssociate(Group group, Role role, DataSource dataSource) {
-    var created = groupService.createGroup(group);
+    var createdGroup = groupService.createGroup(group);
     userService.createUser(role);
     var createdDataSource = dataSourceService.createDataSource(dataSource);
     groupService.deleteAssociation(defaultGroup, createdDataSource);
-    groupService.associate(created, createdDataSource);
+    groupService.associate(createdDataSource, createdGroup, adminGroup);
   }
 
   private boolean isDataSourceCreated() {
