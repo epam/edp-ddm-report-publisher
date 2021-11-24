@@ -66,7 +66,7 @@ public class ExcerptService {
       document.head().select("style").remove();
       
       var styleString = FileUtils.readFileToString(styleFile, StandardCharsets.UTF_8);
-      styleString += "\n* { font-family: DejaVu Sans; }\n";
+      styleString += "\n* { font-family: Roboto; }\n";
       document.head().append("<style>" + styleString + "</style>");
     } catch (Exception e) {
       throw new ExcerptBuildingException("Failed to embed styles into template", e);
