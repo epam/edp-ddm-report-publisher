@@ -37,3 +37,6 @@ It can also create custom roles and excerpt templates in PostgreSQL database
 1. (Optional) Package application into jar file with `mvn clean package`
 2. Add optional arguments to program run arguments, depending what Redash objects you want created
 3. Run application with your favourite IDE or via `java -jar ...` with jar file, created above
+
+### License
+report-publisher is Open Source software released under the Apache 2.0 license.
