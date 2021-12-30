@@ -16,6 +16,8 @@
 
 package com.epam.digital.data.platform.report.service;
 
+import static com.epam.digital.data.platform.report.service.UserService.CREATE_ROLE;
+import static com.epam.digital.data.platform.report.service.UserService.DELETE_ROLE;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -35,7 +37,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class UserServiceTest {
+class UserServiceTest {
 
   @Mock
   DataSource dataSource;
@@ -63,6 +65,7 @@ public class UserServiceTest {
 
     instance.createUser(role);
 
+    verify(connection).prepareCall(CREATE_ROLE);
     verify(statement).setString(1, "\"analytics_officer\"");
     verify(statement).setString(2, "password");
     verify(statement).execute();
@@ -88,6 +91,8 @@ public class UserServiceTest {
 
     instance.deleteUser(group);
 
+    verify(connection).prepareCall(DELETE_ROLE);
+    verify(statement).setString(1, "\"analytics_officer\"");
     verify(statement).execute();
   }
 

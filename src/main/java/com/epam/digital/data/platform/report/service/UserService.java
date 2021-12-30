@@ -30,7 +30,8 @@ public class UserService {
 
   private final DataSource dataSource;
 
-  private final String CREATE_ROLE = "call p_refresh_analytics_user(?, ?);";
+  static final String CREATE_ROLE = "call p_create_analytics_user(?, ?);";
+  static final String DELETE_ROLE = "call p_delete_analytics_user(?);";
 
   public UserService(DataSource dataSource) {
     this.dataSource = dataSource;
@@ -39,7 +40,7 @@ public class UserService {
   public void createUser(Role role) {
     try (Connection connection = dataSource.getConnection();
         PreparedStatement statement = connection.prepareCall(CREATE_ROLE)) {
-      statement.setString(1, buildUserNameFor(role));
+      statement.setString(1, buildUserNameFor(role.getName()));
       statement.setString(2, role.getPassword());
       statement.execute();
     } catch (SQLException e) {
@@ -48,20 +49,16 @@ public class UserService {
   }
 
   public void deleteUser(Group group) {
-    var query = buildDeleteQueryFor(group);
     try (Connection connection = dataSource.getConnection();
-        PreparedStatement statement = connection.prepareCall(query)) {
+        PreparedStatement statement = connection.prepareCall(DELETE_ROLE)) {
+      statement.setString(1, buildUserNameFor(group.getName()));
       statement.execute();
     } catch (SQLException e) {
       throw new DatabaseUserException("Could not drop user", e);
     }
   }
 
-  private String buildDeleteQueryFor(Group group) {
-    return "DROP USER \"analytics_" + group.getName() + "\";";
-  }
-
-  private String buildUserNameFor(Role role) {
-    return "\"analytics_" + role.getName() + "\"";
+  private String buildUserNameFor(String name) {
+    return "\"analytics_" + name + "\"";
   }
 }
