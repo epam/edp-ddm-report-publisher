@@ -47,7 +47,7 @@ public class DataSourceService {
 
   public DataSource getDataSource(Group group) {
     return handleResponse(client.getDataSources()).stream()
-        .filter(dataSource -> dataSource.getName().toLowerCase().contains(group.getName()))
+        .filter(dataSource -> dataSource.getName().toLowerCase().contains(group.getName().toLowerCase()))
         .findFirst()
         .orElseThrow(() -> new NoDataSourceFoundException(
             String.format("No datasource found for role: %s", group.getName())));
