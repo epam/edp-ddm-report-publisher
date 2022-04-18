@@ -103,6 +103,12 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.epam.digital.data.platform</groupId>
+			<artifactId>ddm-ceph-client</artifactId>
+			<version>1.5.2-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 
 	<build>

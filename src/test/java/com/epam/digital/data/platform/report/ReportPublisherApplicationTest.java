@@ -17,6 +17,7 @@
 package com.epam.digital.data.platform.report;
 
 import static com.epam.digital.data.platform.report.util.TestUtils.dataSources;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -25,8 +26,11 @@ import static org.mockito.Mockito.when;
 
 import com.epam.digital.data.platform.report.client.DataSourceClient;
 import com.epam.digital.data.platform.report.config.properties.AppProperties;
+import com.epam.digital.data.platform.report.exception.NoFilesFoundException;
 import com.epam.digital.data.platform.report.model.DataSource;
 import com.epam.digital.data.platform.report.pipeline.AbstractPipeline;
+import com.epam.digital.data.platform.report.service.ExcerptCsvService;
+import com.epam.digital.data.platform.report.service.ExcerptDocxService;
 import com.epam.digital.data.platform.report.service.ExcerptService;
 import com.epam.digital.data.platform.report.service.RoleService;
 import java.io.FileNotFoundException;
@@ -59,11 +63,17 @@ class ReportPublisherApplicationTest {
   @Mock
   private ExcerptService excerptService;
   @Mock
+  private ExcerptDocxService excerptDocxService;
+  @Mock
+  private ExcerptCsvService excerptCsvService;
+  @Mock
   private RoleService roleService;
 
   private AppProperties appProperties;
   private String reportsDirectoryName;
   private String excerptsDirectoryName;
+  private String excerptsDocxDirectoryName;
+  private String excerptsCsvDirectoryName;
 
   private ReportPublisherApplication reportPublisherApplication;
 
@@ -71,6 +81,8 @@ class ReportPublisherApplicationTest {
   void init() throws FileNotFoundException {
     reportsDirectoryName = ResourceUtils.getFile("classpath:pipeline").getAbsolutePath();
     excerptsDirectoryName = ResourceUtils.getFile("classpath:excerpts").getAbsolutePath();
+    excerptsDocxDirectoryName = ResourceUtils.getFile("classpath:excerpts-docx").getAbsolutePath();
+    excerptsCsvDirectoryName = ResourceUtils.getFile("classpath:excerpts-csv").getAbsolutePath();
 
     var pipelines = new ArrayList<AbstractPipeline>();
     pipelines.add(skippedPipeline);
@@ -116,6 +128,44 @@ class ReportPublisherApplicationTest {
     reportPublisherApplication.run(args);
 
     verify(excerptService, never()).loadDir(any());
+  }
+
+  @Test
+  void shouldCallExcerptDocxServiceOnce() {
+    when(args.containsOption("excerpts-docx")).thenReturn(true);
+    reportPublisherApplication.setExcerptDocxService(excerptDocxService);
+    appProperties.setExcerptsDocxDirectoryName(excerptsDocxDirectoryName);
+
+    reportPublisherApplication.run(args);
+
+    verify(excerptDocxService, times(1)).processFile(any());
+  }
+
+  @Test
+  void shouldThrowExceptionWhenIncorrectFolderForExcerptsDocx() {
+    when(args.containsOption("excerpts-docx")).thenReturn(true);
+    appProperties.setExcerptsDocxDirectoryName(excerptsDocxDirectoryName + "a");
+
+    assertThrows(NoFilesFoundException.class, () -> reportPublisherApplication.run(args));
+  }
+
+  @Test
+  void shouldCallExcerptCsvServiceOnce() {
+    when(args.containsOption("excerpts-csv")).thenReturn(true);
+    reportPublisherApplication.setExcerptCsvService(excerptCsvService);
+    appProperties.setExcerptsCsvDirectoryName(excerptsCsvDirectoryName);
+
+    reportPublisherApplication.run(args);
+
+    verify(excerptCsvService, times(1)).processFile(any());
+  }
+
+  @Test
+  void shouldThrowExceptionWhenIncorrectFolderForExcerptsCsv() {
+    when(args.containsOption("excerpts-csv")).thenReturn(true);
+    appProperties.setExcerptsCsvDirectoryName(excerptsCsvDirectoryName + "a");
+
+    assertThrows(NoFilesFoundException.class, () -> reportPublisherApplication.run(args));
   }
 
   @Test

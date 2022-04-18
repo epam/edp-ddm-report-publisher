@@ -16,6 +16,7 @@
 
 package com.epam.digital.data.platform.report.service;
 
+import static com.epam.digital.data.platform.report.util.DBUtils.saveToDataBase;
 import com.epam.digital.data.platform.report.exception.ExcerptBuildingException;
 import com.epam.digital.data.platform.report.model.ExcerptTemplate;
 import com.epam.digital.data.platform.report.repository.ExcerptTemplateRepository;
@@ -32,6 +33,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ExcerptService {
+
+  public static final String TEMPLATE_TYPE = "pdf";
 
   private final ExcerptTemplateRepository repository;
 
@@ -52,9 +55,10 @@ public class ExcerptService {
       var template = new ExcerptTemplate();
       template.setTemplate(document.toString());
       template.setTemplateName(dir.getName());
+      template.setTemplateType(TEMPLATE_TYPE);
       template.setChecksum(DigestUtils.sha256Hex(document.toString()));
 
-      save(template);
+      saveToDataBase(repository, template);
     } catch (Exception e) {
       throw new ExcerptBuildingException("Failed to build template", e);
     }
@@ -87,20 +91,5 @@ public class ExcerptService {
     } catch (Exception e) {
       throw new ExcerptBuildingException("Failed to embed styles into template", e);
     }
-  }
-
-  private void save(ExcerptTemplate newTemplate) {
-    var saved = repository.findFirstByTemplateName(newTemplate.getTemplateName());
-    if (saved == null) {
-      repository.save(newTemplate);
-      return;
-    }
-
-    if (saved.getChecksum().equals(newTemplate.getChecksum())) {
-      return;
-    }
-
-    saved.update(newTemplate);
-    repository.save(saved);
   }
 }

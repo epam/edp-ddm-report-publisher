@@ -28,6 +28,8 @@ import com.epam.digital.data.platform.report.config.properties.AppProperties;
 import com.epam.digital.data.platform.report.model.Context;
 import com.epam.digital.data.platform.report.model.DataSource;
 import com.epam.digital.data.platform.report.pipeline.AbstractPipeline;
+import com.epam.digital.data.platform.report.service.ExcerptCsvService;
+import com.epam.digital.data.platform.report.service.ExcerptDocxService;
 import com.epam.digital.data.platform.report.service.ExcerptService;
 import com.epam.digital.data.platform.report.service.RoleService;
 import java.io.File;
@@ -40,12 +42,14 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.Lazy;
 
 @SpringBootApplication
 @EnableFeignClients
@@ -58,6 +62,8 @@ public class ReportPublisherApplication implements ApplicationRunner {
   private final List<AbstractPipeline> pipelines;
   private final ExcerptService excerptService;
   private final RoleService roleService;
+  private ExcerptDocxService excerptDocxService;
+  private ExcerptCsvService excerptCsvService;
 
   private final String dataSourcePrefix;
 
@@ -98,6 +104,14 @@ public class ReportPublisherApplication implements ApplicationRunner {
     if (args.containsOption("excerpts")) {
       handleExcerpts();
     }
+
+    if (args.containsOption("excerpts-docx")) {
+      handleExcerptsDocx();
+    }
+
+    if (args.containsOption("excerpts-csv")) {
+      handleExcerptsCsv();
+    }
   }
 
   private void handleReports() {
@@ -127,6 +141,22 @@ public class ReportPublisherApplication implements ApplicationRunner {
     for (File templateDir : getDirectories(appProperties.getExcerptsDirectoryName())) {
       log.info("Processing {} directory", templateDir.getName());
       excerptService.loadDir(templateDir);
+    }
+  }
+
+  private void handleExcerptsDocx() {
+    var directory = FileUtils.getFile(appProperties.getExcerptsDocxDirectoryName());
+    for (File templateFile : getFiles(directory)) {
+      log.info("Processing {} file", templateFile.getName());
+      getExcerptDocxService().processFile(templateFile);
+    }
+  }
+
+  private void handleExcerptsCsv() {
+    var directory = FileUtils.getFile(appProperties.getExcerptsCsvDirectoryName());
+    for (File templateFile : getFiles(directory)) {
+      log.info("Processing {} file", templateFile.getName());
+      getExcerptCsvService().processFile(templateFile);
     }
   }
 
@@ -176,5 +206,27 @@ public class ReportPublisherApplication implements ApplicationRunner {
   private List<File> getFiles(File reportDir) {
     return Arrays.stream(getFileList(reportDir))
         .collect(Collectors.toList());
+  }
+
+  public ExcerptDocxService getExcerptDocxService() {
+    return excerptDocxService;
+  }
+
+  @Autowired
+  @Lazy
+  public void setExcerptDocxService(
+      ExcerptDocxService excerptDocxService) {
+    this.excerptDocxService = excerptDocxService;
+  }
+
+  public ExcerptCsvService getExcerptCsvService() {
+    return excerptCsvService;
+  }
+
+  @Autowired
+  @Lazy
+  public void setExcerptCsvService(
+      ExcerptCsvService excerptCsvService) {
+    this.excerptCsvService = excerptCsvService;
   }
 }

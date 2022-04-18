@@ -25,6 +25,8 @@ public class AppProperties {
 
   private String reportsDirectoryName;
   private String excerptsDirectoryName;
+  private String excerptsDocxDirectoryName;
+  private String excerptsCsvDirectoryName;
   private String rolesDirectoryName;
 
   public String getReportsDirectoryName() {
@@ -41,6 +43,22 @@ public class AppProperties {
 
   public void setExcerptsDirectoryName(String excerptsDirectoryName) {
     this.excerptsDirectoryName = excerptsDirectoryName;
+  }
+
+  public String getExcerptsDocxDirectoryName() {
+    return excerptsDocxDirectoryName;
+  }
+
+  public void setExcerptsDocxDirectoryName(String excerptsDocxDirectoryName) {
+    this.excerptsDocxDirectoryName = excerptsDocxDirectoryName;
+  }
+
+  public String getExcerptsCsvDirectoryName() {
+    return excerptsCsvDirectoryName;
+  }
+
+  public void setExcerptsCsvDirectoryName(String excerptsCsvDirectoryName) {
+    this.excerptsCsvDirectoryName = excerptsCsvDirectoryName;
   }
 
   public String getRolesDirectoryName() {
