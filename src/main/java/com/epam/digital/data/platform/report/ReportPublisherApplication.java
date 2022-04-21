@@ -146,6 +146,10 @@ public class ReportPublisherApplication implements ApplicationRunner {
 
   private void handleExcerptsDocx() {
     var directory = FileUtils.getFile(appProperties.getExcerptsDocxDirectoryName());
+    if(!directory.exists()) {
+      log.error("Directory {} does not exist", directory);
+      return;
+    }
     for (File templateFile : getFiles(directory)) {
       log.info("Processing {} file", templateFile.getName());
       getExcerptDocxService().processFile(templateFile);
@@ -154,6 +158,10 @@ public class ReportPublisherApplication implements ApplicationRunner {
 
   private void handleExcerptsCsv() {
     var directory = FileUtils.getFile(appProperties.getExcerptsCsvDirectoryName());
+    if(!directory.exists()) {
+      log.error("Directory {} does not exist", directory);
+      return;
+    }
     for (File templateFile : getFiles(directory)) {
       log.info("Processing {} file", templateFile.getName());
       getExcerptCsvService().processFile(templateFile);

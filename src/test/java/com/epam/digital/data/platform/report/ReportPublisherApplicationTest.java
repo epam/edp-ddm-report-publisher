@@ -142,11 +142,13 @@ class ReportPublisherApplicationTest {
   }
 
   @Test
-  void shouldThrowExceptionWhenIncorrectFolderForExcerptsDocx() {
+  void shouldNotProcessIfIncorrectDocxFolder() {
     when(args.containsOption("excerpts-docx")).thenReturn(true);
     appProperties.setExcerptsDocxDirectoryName(excerptsDocxDirectoryName + "a");
 
-    assertThrows(NoFilesFoundException.class, () -> reportPublisherApplication.run(args));
+    reportPublisherApplication.run(args);
+
+    verify(excerptDocxService, never()).processFile(any());
   }
 
   @Test
@@ -161,11 +163,13 @@ class ReportPublisherApplicationTest {
   }
 
   @Test
-  void shouldThrowExceptionWhenIncorrectFolderForExcerptsCsv() {
+  void shouldNotProcessIfIncorrectCsvFolder() {
     when(args.containsOption("excerpts-csv")).thenReturn(true);
     appProperties.setExcerptsCsvDirectoryName(excerptsCsvDirectoryName + "a");
 
-    assertThrows(NoFilesFoundException.class, () -> reportPublisherApplication.run(args));
+    reportPublisherApplication.run(args);
+
+    verify(excerptDocxService, never()).processFile(any());
   }
 
   @Test
