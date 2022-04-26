@@ -12,7 +12,7 @@
 
 	<groupId>com.epam.digital.data.platform</groupId>
 	<artifactId>report-publisher</artifactId>
-	<version>1.5.0-SNAPSHOT</version>
+	<version>1.6.0</version>
 	<name>report-publisher</name>
 	<description>Report publishing tool</description>
 
