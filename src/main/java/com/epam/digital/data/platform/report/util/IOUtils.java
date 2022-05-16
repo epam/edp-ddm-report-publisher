@@ -18,8 +18,16 @@ package com.epam.digital.data.platform.report.util;
 
 import java.io.File;
 import com.epam.digital.data.platform.report.exception.NoFilesFoundException;
+import java.io.FileInputStream;
+import java.io.IOException;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IOUtils {
+
+    private static final Logger log = LoggerFactory.getLogger(IOUtils.class);
+
     private IOUtils() {}
 
     public static File[] getFileList(File path) {
@@ -30,5 +38,15 @@ public class IOUtils {
         }
 
         return files;
+    }
+
+    public static String getFileChecksum(File file) {
+        StringBuilder sb = new StringBuilder();
+        try (var fis = new FileInputStream(file)) {
+            sb.append(DigestUtils.sha256Hex(fis));
+        } catch (IOException e) {
+            log.error("Error when calculate file {} checksum", file.getName());
+        }
+        return sb.toString();
     }
 }
