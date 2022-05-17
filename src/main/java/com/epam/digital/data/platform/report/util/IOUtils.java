@@ -31,7 +31,7 @@ public class IOUtils {
     private IOUtils() {}
 
     public static File[] getFileList(File path) {
-        File[] files = path.listFiles();
+        File[] files = path.listFiles(file -> !file.isHidden());
 
         if (files == null) {
             throw new NoFilesFoundException("No files found in " + path.getName());
