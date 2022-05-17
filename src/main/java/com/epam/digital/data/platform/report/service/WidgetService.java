@@ -16,6 +16,8 @@
 
 package com.epam.digital.data.platform.report.service;
 
+import static com.epam.digital.data.platform.report.util.ResponseHandler.handleResponse;
+
 import org.springframework.stereotype.Service;
 import com.epam.digital.data.platform.report.client.WidgetClient;
 import com.epam.digital.data.platform.report.model.Dashboard;
@@ -31,9 +33,12 @@ public class WidgetService {
 
     public void save(Dashboard dashboard) {
         for (Widget widget : dashboard.getWidgets()) {
-            widget.setVisualizationId(widget.getVisualization().getId());
+            var visualization = widget.getVisualization();
+            if (visualization != null) {
+                widget.setVisualizationId(visualization.getId());
+            }
             widget.setDashboardId(dashboard.getId());
-            widgetClient.createWidget(widget);
+            handleResponse(widgetClient.createWidget(widget));
         }
     }
 }

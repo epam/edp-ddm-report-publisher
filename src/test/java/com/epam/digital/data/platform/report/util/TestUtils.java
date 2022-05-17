@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.IntStream;
+import org.springframework.http.ResponseEntity;
 
 public class TestUtils {
 
@@ -166,5 +167,9 @@ public class TestUtils {
     group.setId(id);
 
     return group;
+  }
+
+  public static ResponseEntity<Void> mockVoidResponse() {
+    return ResponseEntity.status(200).build();
   }
 }

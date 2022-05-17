@@ -22,6 +22,7 @@ import static com.epam.digital.data.platform.report.util.ResponseHandler.handleR
 import com.epam.digital.data.platform.report.service.QueryService;
 import java.util.List;
 
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -51,11 +52,22 @@ public class Archiver {
     }
 
     private void archiveDashboard(String name) {
-        var response = handleResponse(dashboardClient.getDashboards(name));
+        var found =
+            handleResponse(dashboardClient.findDashboardsByNameContainsIgnoringCase(name));
 
-        response.getResults().stream()
+        var dashboards = found.getResults().stream()
+            .filter(d -> name.equals(d.getName()))
+            .collect(toList());
+
+        if (dashboards.size() > 1) {
+            log.warn(
+                "Found more than 1 dashboard by name \"{}\". Only first one to be archived.", name);
+        }
+
+        dashboards.stream()
+            .findFirst()
             .map(Dashboard::getSlug)
-            .forEach(dashboardClient::archiveDashboard);
+            .ifPresent(d -> handleResponse(dashboardClient.archiveDashboard(d)));
     }
 
     private void archiveQueries(List<Query> queries) {
@@ -65,6 +77,7 @@ public class Archiver {
     private List<Query> getQueries(Dashboard dashboard) {
         return dashboard.getWidgets().stream()
             .map(Widget::getVisualization)
+            .filter(Objects::nonNull)
             .map(Visualization::getQuery)
             .collect(toList());
     }

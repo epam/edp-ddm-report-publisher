@@ -16,6 +16,7 @@
 
 package com.epam.digital.data.platform.report.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
@@ -27,6 +28,7 @@ public class Widget {
     private Object options;
     private Integer width;
     private Integer dashboardId;
+    @JsonInclude
     private Integer visualizationId;
     @JsonProperty(access = Access.WRITE_ONLY)
     private Visualization visualization;

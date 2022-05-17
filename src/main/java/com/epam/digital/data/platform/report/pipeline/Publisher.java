@@ -21,6 +21,7 @@ import static com.epam.digital.data.platform.report.util.ResponseHandler.handleR
 import com.epam.digital.data.platform.report.service.QueryService;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -52,7 +53,7 @@ public class Publisher {
     }
 
     public void publish(Dashboard dashboard, Context context) {
-        Dashboard created = saveDashboard(dashboard);
+        Dashboard created = createDashboard(dashboard);
         dashboard.setId(created.getId());
         log.info("Created new dashboard {} with id {}", created.getName(), created.getId());
 
@@ -64,10 +65,10 @@ public class Publisher {
 
     private void publish(Dashboard dashboard) {
         Dashboard dashboardStub = new Dashboard();
-        dashboardClient.updateDashboard(dashboard.getId(), dashboardStub);
+        handleResponse(dashboardClient.updateDashboard(dashboard.getId(), dashboardStub));
     }
 
-    private Dashboard saveDashboard(Dashboard dashboard) {
+    private Dashboard createDashboard(Dashboard dashboard) {
         return handleResponse(dashboardClient.createDashboard(dashboard));
     }
 
@@ -80,6 +81,7 @@ public class Publisher {
     private Map<Query, List<Visualization>> visualizationsByQuery(Dashboard dashboard) {
         return dashboard.getWidgets().stream()
             .map(Widget::getVisualization)
+            .filter(Objects::nonNull)
             .collect(Collectors.groupingBy(Visualization::getQuery));
     }
 }

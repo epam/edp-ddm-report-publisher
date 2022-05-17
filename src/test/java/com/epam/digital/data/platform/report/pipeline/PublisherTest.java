@@ -61,6 +61,7 @@ public class PublisherTest {
         var input = dashboard("stub");
         var created = mockResponse();
         when(dashboardClient.createDashboard(any())).thenReturn(created);
+        when(dashboardClient.updateDashboard(anyInt(), any())).thenReturn(created);
         when(queryService.save(any(), any())).thenReturn(new HashSet<>());
 
         instance.publish(input, TestUtils.context());

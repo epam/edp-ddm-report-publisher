@@ -17,6 +17,7 @@
 package com.epam.digital.data.platform.report.pipeline;
 
 import static com.epam.digital.data.platform.report.util.TestUtils.dashboard;
+import static com.epam.digital.data.platform.report.util.TestUtils.mockVoidResponse;
 import static java.util.List.of;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -53,11 +54,12 @@ public class ArchiverTest {
     void shouldSuccessfullyArchiveDashboardAndQueries() {
         ResponseEntity<Page<Dashboard>> dashboardResponse = mockDashboardResponse();
 
-        when(dashboardClient.getDashboards(any())).thenReturn(dashboardResponse);
+        when(dashboardClient.findDashboardsByNameContainsIgnoringCase(any())).thenReturn(dashboardResponse);
+        when(dashboardClient.archiveDashboard(any())).thenReturn(mockVoidResponse());
 
         instance.archive(dashboard("stub"));
 
-        verify(dashboardClient).getDashboards("stub");
+        verify(dashboardClient).findDashboardsByNameContainsIgnoringCase("stub");
         verify(dashboardClient).archiveDashboard("stub");
         verify(queryService).archive(any());
     }

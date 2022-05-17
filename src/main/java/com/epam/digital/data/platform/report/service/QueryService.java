@@ -53,7 +53,7 @@ public class QueryService {
 
     public void publish(Set<Query> queries) {
         Query queryStub = new Query();
-        queries.forEach(query -> queryClient.updateQuery(query.getId(), queryStub));
+        queries.forEach(query -> handleResponse(queryClient.updateQuery(query.getId(), queryStub)));
     }
 
     public void execute(Set<Query> queries) {
@@ -66,7 +66,7 @@ public class QueryService {
 
             response.getResults().stream()
                 .map(Query::getId)
-                .forEach(queryClient::archiveQuery);
+                .forEach(q -> handleResponse(queryClient.archiveQuery(q)));
         }
     }
 

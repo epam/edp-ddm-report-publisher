@@ -42,7 +42,7 @@ public class DashboardPipeline extends AbstractPipeline {
 
     private final Logger log = LoggerFactory.getLogger(DashboardPipeline.class);
 
-    private final Predicate<? super File> DASHBOARD_FILTER =
+    private static final Predicate<? super File> DASHBOARD_FILTER =
         file -> !file.isDirectory() && file.getName().endsWith(".json");
 
     public DashboardPipeline(ObjectMapper objectMapper, Archiver archiver, Publisher publisher) {

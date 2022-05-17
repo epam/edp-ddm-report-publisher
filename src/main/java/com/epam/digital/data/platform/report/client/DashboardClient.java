@@ -39,7 +39,7 @@ public interface DashboardClient {
         @RequestBody Dashboard dashboard);
 
     @GetMapping("/api/dashboards")
-    ResponseEntity<Page<Dashboard>> getDashboards(@RequestParam("q") String name);
+    ResponseEntity<Page<Dashboard>> findDashboardsByNameContainsIgnoringCase(@RequestParam("q") String name);
 
     @GetMapping("/api/dashboards/{slug}")
     ResponseEntity<Dashboard> getDashboardBySlug(@PathVariable("slug") String slug);
