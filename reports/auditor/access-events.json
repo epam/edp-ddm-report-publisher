@@ -1,0 +1,279 @@
+{
+    "tags": [ ],
+    "is_archived": false,
+    "updated_at": "2022-06-15T07:25:01.627Z",
+    "is_favorite": false,
+    "user": {
+    "auth_type": "password",
+    "is_disabled": false,
+    "updated_at": "2022-06-15T12:32:53.806Z",
+    "profile_image_url": "https://www.gravatar.com/avatar/6ad193f57f79ac444c3621370da955e9?s=40&d=identicon",
+    "is_invitation_pending": false,
+    "groups": [
+    1,
+    2
+    ],
+    "id": 1,
+    "name": "redash-admin",
+    "created_at": "2022-05-31T14:59:58.527Z",
+    "disabled_at": null,
+    "is_email_verified": true,
+    "active_at": "2022-06-15T12:32:42Z",
+    "email": "user@mail.com"
+    },
+    "layout": [ ],
+    "is_draft": false,
+    "id": 3,
+    "can_edit": true,
+    "user_id": 1,
+    "name": "Журнал управління доступами користувачів",
+    "created_at": "2022-06-15T07:24:31.230Z",
+    "slug": "access-events",
+    "version": 3,
+    "widgets": [
+    {
+    "visualization": {
+    "description": "",
+    "created_at": "2022-06-09T12:00:31.660Z",
+    "updated_at": "2022-06-15T07:24:42.984Z",
+    "id": 8,
+    "query": {
+    "user": {
+    "auth_type": "password",
+    "is_disabled": false,
+    "updated_at": "2022-06-15T12:32:53.806Z",
+    "profile_image_url": "https://www.gravatar.com/avatar/6ad193f57f79ac444c3621370da955e9?s=40&d=identicon",
+    "is_invitation_pending": false,
+    "groups": [
+    1,
+    2
+    ],
+    "id": 1,
+    "name": "redash-admin",
+    "created_at": "2022-05-31T14:59:58.527Z",
+    "disabled_at": null,
+    "is_email_verified": true,
+    "active_at": "2022-06-15T12:32:42Z",
+    "email": "user@mail.com"
+    },
+    "created_at": "2022-06-09T12:00:31.660Z",
+    "latest_query_data_id": null,
+    "schedule": null,
+    "description": null,
+    "tags": [ ],
+    "updated_at": "2022-06-15T07:22:40.247Z",
+    "last_modified_by": {
+    "auth_type": "password",
+    "is_disabled": false,
+    "updated_at": "2022-06-15T12:32:53.806Z",
+    "profile_image_url": "https://www.gravatar.com/avatar/6ad193f57f79ac444c3621370da955e9?s=40&d=identicon",
+    "is_invitation_pending": false,
+    "groups": [
+    1,
+    2
+    ],
+    "id": 1,
+    "name": "redash-admin",
+    "created_at": "2022-05-31T14:59:58.527Z",
+    "disabled_at": null,
+    "is_email_verified": true,
+    "active_at": "2022-06-15T12:32:42Z",
+    "email": "user@mail.com"
+    },
+    "options": {
+    "parameters": [
+    {
+    "name": "timestamp",
+    "title": "Дата та час операції",
+    "global": false,
+    "value": "d_last_year",
+    "locals": [ ],
+    "type": "datetime-range",
+    "parentQueryId": 8
+    },
+    {
+    "name": "request_id",
+    "title": "Ідентифікатор запита",
+    "global": false,
+    "value": "*",
+    "locals": [ ],
+    "type": "text",
+    "parentQueryId": 8
+    },
+    {
+    "name": "name",
+    "title": "Ідентифікатор події в БД",
+    "global": false,
+    "value": "*",
+    "locals": [ ],
+    "type": "text",
+    "parentQueryId": 8
+    },
+    {
+    "name": "source_system",
+    "multiValuesOptions": {
+    "prefix": "'",
+    "separator": ",",
+    "suffix": "'"
+    },
+    "global": false,
+    "value": [
+    "( Всі значення )"
+    ],
+    "queryId": 4,
+    "parentQueryId": 8,
+    "title": "Система виклику БП",
+    "type": "query",
+    "locals": [ ]
+    },
+    {
+    "name": "source_business_process",
+    "title": "Назва бізнес-процесу",
+    "global": false,
+    "value": "*",
+    "locals": [ ],
+    "type": "text",
+    "parentQueryId": 8
+    },
+    {
+    "name": "source_business_process_definition_id",
+    "title": "Ідентифікатор типу БП",
+    "global": false,
+    "value": "*",
+    "locals": [ ],
+    "type": "text",
+    "parentQueryId": 8
+    },
+    {
+    "name": "source_business_process_instance_id",
+    "title": "Ідентифікатор активного БП",
+    "global": false,
+    "value": "*",
+    "locals": [ ],
+    "type": "text",
+    "parentQueryId": 8
+    },
+    {
+    "name": "source_business_activity",
+    "title": "Назва кроку в БП",
+    "global": false,
+    "value": "*",
+    "locals": [ ],
+    "type": "text",
+    "parentQueryId": 8
+    },
+    {
+    "name": "source_business_activity_id",
+    "title": "Ідентифікатор кроку в БП",
+    "global": false,
+    "value": "*",
+    "locals": [ ],
+    "type": "text",
+    "parentQueryId": 8
+    }
+    ]
+    },
+    "is_safe": false,
+    "version": 1,
+    "query_hash": "6df840eb238a73a2a07cc9608fd50a49",
+    "is_archived": false,
+    "query": "SELECT\n    timestamp as \"Дата та час операції\",\n    request_id as \"Ідентифікатор запита\",\n    name as \"Ідентифікатор події в БД\",\n    user_keycloak_id as \"Ідентифікатор користувач\",\n    user_name as \"Користувач\",\n    source_system as \"Назва системи\",\n    source_application as \"Назва додатку\",\n    source_business_process as \"Назва бізнес процесу\",\n    source_business_process_definition_id as \"Ідентифікатор типу БП\",\n    source_business_process_instance_id as \"Ідентифікатор активного БП\",\n    source_business_activity as \"Назва кроку в БП\",\n    source_business_activity_id as \"Ідентифікатор кроку в БП\"\nFROM audit_event_security_event_v\nWHERE timestamp BETWEEN '{{ timestamp.start }}' AND '{{ timestamp.end }}'\n    AND application_name = 'keycloak'\n    AND action = 'SYSTEM_EVENT'\n    AND request_id ~* replace(regexp_replace('{{ request_id }}', '([()+.?[\\\\\\]])', '\\\\\\1', 'g'), '*', '.*')\n    AND name ~* replace(regexp_replace('{{ name }}', '([()+.?[\\\\\\]])', '\\\\\\1', 'g'), '*', '.*')\n    AND ( '( Всі значення )' IN ({{source_system}}) OR source_system IN ({{source_system}}) )\n    AND coalesce(source_business_process, 'null') ~* replace(regexp_replace('{{ source_business_process }}', '([()+.?[\\\\\\]])', '\\\\\\1', 'g'), '*', '.*')\n    AND coalesce(source_business_process_definition_id, 'null') ~* replace(regexp_replace('{{ source_business_process_definition_id }}', '([()+.?[\\\\\\]])', '\\\\\\1', 'g'), '*', '.*')\n    AND coalesce(source_business_process_instance_id, 'null') ~* replace(regexp_replace('{{ source_business_process_instance_id }}', '([()+.?[\\\\\\]])', '\\\\\\1', 'g'), '*', '.*')\n    AND coalesce(source_business_activity, 'null') ~* replace(regexp_replace('{{ source_business_activity }}', '([()+.?[\\\\\\]])', '\\\\\\1', 'g'), '*', '.*')\n    AND coalesce(source_business_activity_id, 'null') ~* replace(regexp_replace('{{ source_business_activity_id }}', '([()+.?[\\\\\\]])', '\\\\\\1', 'g'), '*', '.*')\nORDER BY timestamp DESC",
+    "api_key": "lQNHqzdjFkCMUisiurjtghb3vV5tZTgjFti3XXmv",
+    "is_draft": false,
+    "id": 8,
+    "data_source_id": 1,
+    "name": "Аудит управління доступами користувачів"
+    },
+    "type": "TABLE",
+    "options": { },
+    "name": "Table"
+    },
+    "text": "",
+    "created_at": "2022-06-15T07:24:42.984Z",
+    "updated_at": "2022-06-15T07:24:51.422Z",
+    "options": {
+    "parameterMappings": {
+    "source_business_activity": {
+    "type": "dashboard-level",
+    "mapTo": "source_business_activity",
+    "name": "source_business_activity",
+    "value": null,
+    "title": ""
+    },
+    "source_business_process_instance_id": {
+    "type": "dashboard-level",
+    "mapTo": "source_business_process_instance_id",
+    "name": "source_business_process_instance_id",
+    "value": null,
+    "title": ""
+    },
+    "name": {
+    "type": "dashboard-level",
+    "mapTo": "name",
+    "name": "name",
+    "value": null,
+    "title": ""
+    },
+    "source_business_process_definition_id": {
+    "type": "dashboard-level",
+    "mapTo": "source_business_process_definition_id",
+    "name": "source_business_process_definition_id",
+    "value": null,
+    "title": ""
+    },
+    "source_system": {
+    "type": "dashboard-level",
+    "mapTo": "source_system",
+    "name": "source_system",
+    "value": null,
+    "title": ""
+    },
+    "timestamp": {
+    "type": "dashboard-level",
+    "mapTo": "timestamp",
+    "name": "timestamp",
+    "value": null,
+    "title": ""
+    },
+    "source_business_process": {
+    "type": "dashboard-level",
+    "mapTo": "source_business_process",
+    "name": "source_business_process",
+    "value": null,
+    "title": ""
+    },
+    "request_id": {
+    "type": "dashboard-level",
+    "mapTo": "request_id",
+    "name": "request_id",
+    "value": null,
+    "title": ""
+    },
+    "source_business_activity_id": {
+    "type": "dashboard-level",
+    "mapTo": "source_business_activity_id",
+    "name": "source_business_activity_id",
+    "value": null,
+    "title": ""
+    }
+    },
+    "isHidden": false,
+    "position": {
+    "autoHeight": false,
+    "sizeX": 6,
+    "sizeY": 13,
+    "maxSizeY": 1000,
+    "maxSizeX": 6,
+    "minSizeY": 1,
+    "minSizeX": 2,
+    "col": 0,
+    "row": 0
+    }
+    },
+    "dashboard_id": 3,
+    "width": 1,
+    "id": 3
+    }
+    ],
+    "dashboard_filters_enabled": false
+    }

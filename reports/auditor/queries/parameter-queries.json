@@ -1,8 +1,141 @@
 {
-  "count": 7,
+  "count": 8,
   "page": 1,
   "page_size": 25,
   "results": [
+    {
+      "is_archived": false,
+      "retrieved_at": null,
+      "updated_at": "2022-06-15T07:22:40.247Z",
+      "is_favorite": false,
+      "query": "SELECT\n    timestamp as \"Дата та час операції\",\n    request_id as \"Ідентифікатор запита\",\n    name as \"Ідентифікатор події в БД\",\n    user_keycloak_id as \"Ідентифікатор користувач\",\n    user_name as \"Користувач\",\n    source_system as \"Назва системи\",\n    source_application as \"Назва додатку\",\n    source_business_process as \"Назва бізнес процесу\",\n    source_business_process_definition_id as \"Ідентифікатор типу БП\",\n    source_business_process_instance_id as \"Ідентифікатор активного БП\",\n    source_business_activity as \"Назва кроку в БП\",\n    source_business_activity_id as \"Ідентифікатор кроку в БП\"\nFROM audit_event_security_event_v\nWHERE timestamp BETWEEN '{{ timestamp.start }}' AND '{{ timestamp.end }}'\n    AND application_name = 'keycloak'\n    AND action = 'SYSTEM_EVENT'\n    AND request_id ~* replace(regexp_replace('{{ request_id }}', '([()+.?[\\\\\\]])', '\\\\\\1', 'g'), '*', '.*')\n    AND name ~* replace(regexp_replace('{{ name }}', '([()+.?[\\\\\\]])', '\\\\\\1', 'g'), '*', '.*')\n    AND ( '( Всі значення )' IN ({{source_system}}) OR source_system IN ({{source_system}}) )\n    AND coalesce(source_business_process, 'null') ~* replace(regexp_replace('{{ source_business_process }}', '([()+.?[\\\\\\]])', '\\\\\\1', 'g'), '*', '.*')\n    AND coalesce(source_business_process_definition_id, 'null') ~* replace(regexp_replace('{{ source_business_process_definition_id }}', '([()+.?[\\\\\\]])', '\\\\\\1', 'g'), '*', '.*')\n    AND coalesce(source_business_process_instance_id, 'null') ~* replace(regexp_replace('{{ source_business_process_instance_id }}', '([()+.?[\\\\\\]])', '\\\\\\1', 'g'), '*', '.*')\n    AND coalesce(source_business_activity, 'null') ~* replace(regexp_replace('{{ source_business_activity }}', '([()+.?[\\\\\\]])', '\\\\\\1', 'g'), '*', '.*')\n    AND coalesce(source_business_activity_id, 'null') ~* replace(regexp_replace('{{ source_business_activity_id }}', '([()+.?[\\\\\\]])', '\\\\\\1', 'g'), '*', '.*')\nORDER BY timestamp DESC",
+      "id": 8,
+      "description": null,
+      "last_modified_by_id": 1,
+      "tags": [ ],
+      "version": 1,
+      "query_hash": "6df840eb238a73a2a07cc9608fd50a49",
+      "api_key": "lQNHqzdjFkCMUisiurjtghb3vV5tZTgjFti3XXmv",
+      "data_source_id": 1,
+      "is_safe": false,
+      "latest_query_data_id": null,
+      "schedule": null,
+      "user": {
+      "auth_type": "password",
+      "is_disabled": false,
+      "updated_at": "2022-06-15T12:29:53.734Z",
+      "profile_image_url": "https://www.gravatar.com/avatar/6ad193f57f79ac444c3621370da955e9?s=40&d=identicon",
+      "is_invitation_pending": false,
+      "groups": [
+      1,
+      2
+      ],
+      "id": 1,
+      "name": "redash-admin",
+      "created_at": "2022-05-31T14:59:58.527Z",
+      "disabled_at": null,
+      "is_email_verified": true,
+      "active_at": "2022-06-15T12:29:49Z",
+      "email": "user@mail.com"
+      },
+      "is_draft": false,
+      "name": "Аудит управління доступами користувачів",
+      "created_at": "2022-06-09T12:00:31.660Z",
+      "runtime": null,
+      "options": {
+      "parameters": [
+      {
+      "name": "timestamp",
+      "title": "Дата та час операції",
+      "global": false,
+      "value": "d_last_year",
+      "locals": [ ],
+      "type": "datetime-range",
+      "parentQueryId": 8
+      },
+      {
+      "name": "request_id",
+      "title": "Ідентифікатор запита",
+      "global": false,
+      "value": "*",
+      "locals": [ ],
+      "type": "text",
+      "parentQueryId": 8
+      },
+      {
+      "name": "name",
+      "title": "Ідентифікатор події в БД",
+      "global": false,
+      "value": "*",
+      "locals": [ ],
+      "type": "text",
+      "parentQueryId": 8
+      },
+      {
+      "name": "source_system",
+      "multiValuesOptions": {
+      "prefix": "'",
+      "separator": ",",
+      "suffix": "'"
+      },
+      "global": false,
+      "value": [
+      "( Всі значення )"
+      ],
+      "queryId": 4,
+      "parentQueryId": 8,
+      "title": "Система виклику БП",
+      "type": "query",
+      "locals": [ ]
+      },
+      {
+      "name": "source_business_process",
+      "title": "Назва бізнес-процесу",
+      "global": false,
+      "value": "*",
+      "locals": [ ],
+      "type": "text",
+      "parentQueryId": 8
+      },
+      {
+      "name": "source_business_process_definition_id",
+      "title": "Ідентифікатор типу БП",
+      "global": false,
+      "value": "*",
+      "locals": [ ],
+      "type": "text",
+      "parentQueryId": 8
+      },
+      {
+      "name": "source_business_process_instance_id",
+      "title": "Ідентифікатор активного БП",
+      "global": false,
+      "value": "*",
+      "locals": [ ],
+      "type": "text",
+      "parentQueryId": 8
+      },
+      {
+      "name": "source_business_activity",
+      "title": "Назва кроку в БП",
+      "global": false,
+      "value": "*",
+      "locals": [ ],
+      "type": "text",
+      "parentQueryId": 8
+      },
+      {
+      "name": "source_business_activity_id",
+      "title": "Ідентифікатор кроку в БП",
+      "global": false,
+      "value": "*",
+      "locals": [ ],
+      "type": "text",
+      "parentQueryId": 8
+      }
+      ]
+      }
+      },
     {
       "is_archived": false,
       "retrieved_at": "2021-08-16T11:32:46.608Z",
