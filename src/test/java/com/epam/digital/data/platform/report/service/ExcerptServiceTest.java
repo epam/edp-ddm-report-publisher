@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 EPAM Systems.
+ * Copyright 2022 EPAM Systems.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,12 +52,11 @@ class ExcerptServiceTest {
   @Captor
   private ArgumentCaptor<ExcerptTemplate> templateCaptor;
 
-  private static final String expectedChecksum = "1e6ba48b81622cebc8d027ba907aa73f665f898abe1e1a48916883f9cfc28974";
+  private static final String expectedChecksum = "009bed673a8a30cd6d1db46067201b146e8a4a7666a66d8456bb5fbb69965590";
 
   private static String expectedResult;
   private static File correctReportFile;
   private static File missingPictureFile;
-  private static File missingStyleCssFile;
   private static File correctResultFile;
   private static File redundantStylesFile;
 
@@ -67,7 +66,6 @@ class ExcerptServiceTest {
   static void setup() throws IOException, URISyntaxException {
     correctReportFile = getFile("/excerpts/CorrectExcerpt");
     missingPictureFile = getFile("/excerpts/MissingPictureExcerpt");
-    missingStyleCssFile = getFile("/excerpts/MissingStyleCssExcerpt");
     correctResultFile = getFile("/excerpts/correctResult");
     redundantStylesFile = getFile("/excerpts/RedundantStylesExcerpt");
 
@@ -97,7 +95,7 @@ class ExcerptServiceTest {
 
     var resultDocument = Jsoup.parse(result);
     assertThat(resultDocument.head().select("link")).isEmpty();
-    assertThat(resultDocument.head().select("style")).hasToString("<style>\n"
+    assertThat(resultDocument.head().select("style")).hasToString("<style>\n\n"
         + "* { font-family: Roboto; }\n"
         + "</style>");
   }
@@ -106,12 +104,6 @@ class ExcerptServiceTest {
   void shouldThrowExceptionWhenMissingPicture() {
     Assertions.assertThrows(ExcerptBuildingException.class,
         () -> service.loadDir(missingPictureFile));
-  }
-
-  @Test
-  void shouldThrowExceptionWhenMissingStyleCss() {
-    Assertions.assertThrows(ExcerptBuildingException.class,
-        () -> service.loadDir(missingStyleCssFile));
   }
 
   @Test

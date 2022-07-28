@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 EPAM Systems.
+ * Copyright 2022 EPAM Systems.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,14 @@ import java.nio.file.Path;
 import java.util.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -37,6 +42,7 @@ public class ExcerptService {
   public static final String TEMPLATE_TYPE = "pdf";
 
   private final ExcerptTemplateRepository repository;
+  private final Logger log = LoggerFactory.getLogger(ExcerptService.class);
 
   public ExcerptService(ExcerptTemplateRepository repository) {
     this.repository = repository;
@@ -80,16 +86,39 @@ public class ExcerptService {
   }
 
   private void embedStyleToHtml(Document document, File dir) {
-    var styleFile = Path.of(dir.getPath(), "css", "style.css").toFile();
-    try {
-      document.head().select("link").remove();
-      document.head().select("style").remove();
-      
-      var styleString = FileUtils.readFileToString(styleFile, StandardCharsets.UTF_8);
-      styleString += "\n* { font-family: Roboto; }\n";
-      document.head().append("<style>" + styleString + "</style>");
-    } catch (Exception e) {
-      throw new ExcerptBuildingException("Failed to embed styles into template", e);
+    var styleString = getStyleAsString(document, dir);
+
+    document.head().select("style").remove();
+    styleString += "\n* { font-family: Roboto; }\n";
+    document.head().append("<style>" + styleString + "</style>");
+  }
+
+  private String getStyleAsString(Document document, File dir) {
+    Elements links = document.select("link[href]");
+
+    var styleString = new StringBuilder();
+    for (Element link : links) {
+      String styleNameHref = link.attr("href");
+
+      if (StringUtils.isNotBlank(styleNameHref)) {
+        var styleFile = Path.of(dir.getPath(), "css", FilenameUtils.getName(styleNameHref))
+            .toFile();
+
+        if (styleFile.exists()) {
+          try {
+            styleString.append(FileUtils.readFileToString(styleFile, StandardCharsets.UTF_8))
+                .append("\n");
+            link.remove();
+          } catch (Exception e) {
+            throw new ExcerptBuildingException("Failed to embed styles into template", e);
+          }
+        } else {
+          log.error("Failed to embed styles into template, file '{}' doesn't exist.",
+              styleNameHref);
+        }
+      }
     }
+
+    return styleString.toString();
   }
 }
