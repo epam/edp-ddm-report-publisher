@@ -30,6 +30,7 @@
 		<apache.commonsio.version>2.11.0</apache.commonsio.version>
 		<jsoup.version>1.13.1</jsoup.version>
 		<commons.compress.version>1.20</commons.compress.version>
+		<snakeyaml.version>1.33</snakeyaml.version>
 	</properties>
 
 	<dependencyManagement>
@@ -40,6 +41,11 @@
 				<version>${spring.cloud.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.yaml</groupId>
+				<artifactId>snakeyaml</artifactId>
+				<version>${snakeyaml.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
