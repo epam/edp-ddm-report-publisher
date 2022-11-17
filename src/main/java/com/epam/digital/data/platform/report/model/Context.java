@@ -16,11 +16,12 @@
 
 package com.epam.digital.data.platform.report.model;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Context {
     private int dataSourceId;
-    private Map<Integer, Integer> mappedIds;
+    private final Map<Integer, Integer> mappedIds = new HashMap<>();
 
     public int getDataSourceId() {
         return dataSourceId;
@@ -34,7 +35,7 @@ public class Context {
         return mappedIds;
     }
 
-    public void setMappedIds(Map<Integer, Integer> mappedIds) {
-        this.mappedIds = mappedIds;
+    public void addMappedIds(Map<Integer, Integer> mappedIds) {
+        this.mappedIds.putAll(mappedIds);
     }
 }

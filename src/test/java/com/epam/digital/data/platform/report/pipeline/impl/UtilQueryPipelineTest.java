@@ -16,40 +16,143 @@
 
 package com.epam.digital.data.platform.report.pipeline.impl;
 
+import static com.epam.digital.data.platform.report.util.TestUtils.context;
 import static java.util.List.of;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
-import static com.epam.digital.data.platform.report.util.TestUtils.context;
 
+import com.epam.digital.data.platform.report.config.TestConfig;
+import com.epam.digital.data.platform.report.exception.QueryPublishingException;
+import com.epam.digital.data.platform.report.model.Context;
+import com.epam.digital.data.platform.report.model.Query;
 import com.epam.digital.data.platform.report.service.QueryService;
 import java.io.IOException;
+import java.util.Map;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.util.ResourceUtils;
-import com.epam.digital.data.platform.report.config.TestConfig;
 
 @SpringBootTest(classes = {UtilQueryPipeline.class})
 @Import(TestConfig.class)
-public class UtilQueryPipelineTest {
+class UtilQueryPipelineTest {
 
-    @MockBean
-    private QueryService queryService;
-    @Autowired
-    private UtilQueryPipeline utilQueryPipeline;
+  @MockBean
+  private QueryService queryService;
+  @Autowired
+  private UtilQueryPipeline utilQueryPipeline;
+
+  @Test
+  void shouldSuccessfullyArchiveAndPublishDashboard() throws IOException {
+    var dir = ResourceUtils.getFile("classpath:pipeline/officer/queries");
+    var files = of(dir);
+
+    utilQueryPipeline.process(files, context());
+
+    verify(queryService).archive(any());
+    verify(queryService).save(any(), any());
+    verify(queryService).publish(any());
+  }
+
+  @Nested
+  class PublishingNestedQueriesFromLowerLevelToHigher {
 
     @Test
-    void shouldSuccessfullyArchiveAndPublishDashboard() throws IOException {
-        var dir = ResourceUtils.getFile("classpath:pipeline/officer/queries");
-        var files = of(dir);
+    void shouldPublishQueriesFromFirstLevel() throws IOException {
+      // First-level queries not depends on any other queries. They should be published first
+      var dir = ResourceUtils.getFile("classpath:pipeline/sub-query/queries");
+      var files = of(dir);
+      Context context = new Context();
 
-        utilQueryPipeline.process(files, context());
+      var firstLevel = ArgumentCaptor.forClass(Map.class);
 
-        verify(queryService).archive(any());
-        verify(queryService).save(any(), any());
-        verify(queryService).publish(any());
-        verify(queryService).execute(any());
+      try {
+        utilQueryPipeline.process(files, context);
+      } catch (QueryPublishingException e) {
+        assertThat(e.getMessage()).isEqualTo(
+            "Queries '[48, 49, 50]' cannot be published because they have a circular "
+                + "dependency or depend on other queries that are not in the file with queries");
+      }
+      verify(queryService).save(firstLevel.capture(), any());
+      var queryIds = getQueryIds(firstLevel);
+
+      assertThat(queryIds).containsExactlyInAnyOrder(35, 43, 46, 47);
     }
+
+    @Test
+    void shouldPublishQueriesFromFirstAndSecondLevel() throws IOException {
+      // Second-level queries depends on queries from first level. 
+      // They should be published after first-level queries
+      var dir = ResourceUtils.getFile("classpath:pipeline/sub-query/queries");
+      var files = of(dir);
+      Context context = new Context();
+      context.addMappedIds(Map.of(35, 135, 43, 143, 46, 146, 47, 147));
+
+      var secondLevel = ArgumentCaptor.forClass(Map.class);
+
+      try {
+        utilQueryPipeline.process(files, context);
+      } catch (QueryPublishingException e) {
+        assertThat(e.getMessage()).isEqualTo(
+            "Queries '[49, 50]' cannot be published because they have a circular "
+                + "dependency or depend on other queries that are not in the file with queries");
+      }
+      verify(queryService).save(secondLevel.capture(), any());
+      var queryIds = getQueryIds(secondLevel);
+
+      assertThat(queryIds).containsExactlyInAnyOrder(35, 43, 46, 47, 48);
+    }
+
+    @Test
+    void shouldPublishQueriesFromFirstSecondAndThirdLevel() throws IOException {
+      // Third-level queries depends on queries from second level
+      var dir = ResourceUtils.getFile("classpath:pipeline/sub-query/queries");
+      var files = of(dir);
+      Context context = new Context();
+      context.addMappedIds(Map.of(35, 135, 43, 143, 46, 146, 47, 147, 48, 148));
+
+      var secondLevel = ArgumentCaptor.forClass(Map.class);
+
+      try {
+        utilQueryPipeline.process(files, context);
+      } catch (QueryPublishingException e) {
+        assertThat(e.getMessage()).isEqualTo(
+            "Queries '[50]' cannot be published because they have a circular " 
+                + "dependency or depend on other queries that are not in the file with queries");
+      }
+      verify(queryService).save(secondLevel.capture(), any());
+      var queryIds = getQueryIds(secondLevel);
+
+      assertThat(queryIds).containsExactlyInAnyOrder(35, 43, 46, 47, 48, 49);
+    }
+
+    @Test
+    void shouldPublishQueriesFirstSecondThirdAndFourthLevel() throws IOException {
+      var dir = ResourceUtils.getFile("classpath:pipeline/sub-query/queries");
+      var files = of(dir);
+      Context context = new Context();
+      context.addMappedIds(Map.of(35, 135, 43, 143, 46, 146, 47, 147, 48, 148, 49, 149));
+
+      var secondLevel = ArgumentCaptor.forClass(Map.class);
+
+      utilQueryPipeline.process(files, context);
+
+      verify(queryService).save(secondLevel.capture(), any());
+      var queryIds = getQueryIds(secondLevel);
+
+      assertThat(queryIds).containsExactlyInAnyOrder(35, 43, 46, 47, 48, 49, 50);
+    }
+
+    
+    private int[] getQueryIds(ArgumentCaptor<Map> queries) {
+      return queries.getValue().keySet().stream()
+          .map(q -> ((Query) q).getId())
+          .mapToInt(x -> (int) x).toArray();
+    }
+  }
 }

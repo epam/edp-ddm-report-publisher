@@ -91,7 +91,7 @@ public class TestUtils {
 
     mappedIds.put(0, 1);
     context.setDataSourceId(1);
-    context.setMappedIds(mappedIds);
+    context.addMappedIds(mappedIds);
 
     return context;
   }
