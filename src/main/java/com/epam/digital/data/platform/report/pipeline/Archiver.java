@@ -66,7 +66,7 @@ public class Archiver {
 
         dashboards.stream()
             .findFirst()
-            .map(Dashboard::getSlug)
+            .map(Dashboard::getId)
             .ifPresent(d -> handleResponse(dashboardClient.archiveDashboard(d)));
     }
 

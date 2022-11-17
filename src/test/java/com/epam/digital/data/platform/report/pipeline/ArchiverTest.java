@@ -20,6 +20,7 @@ import static com.epam.digital.data.platform.report.util.TestUtils.dashboard;
 import static com.epam.digital.data.platform.report.util.TestUtils.mockVoidResponse;
 import static java.util.List.of;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -55,12 +56,12 @@ public class ArchiverTest {
         ResponseEntity<Page<Dashboard>> dashboardResponse = mockDashboardResponse();
 
         when(dashboardClient.findDashboardsByNameContainsIgnoringCase(any())).thenReturn(dashboardResponse);
-        when(dashboardClient.archiveDashboard(any())).thenReturn(mockVoidResponse());
+        when(dashboardClient.archiveDashboard(anyInt())).thenReturn(mockVoidResponse());
 
         instance.archive(dashboard("stub"));
 
         verify(dashboardClient).findDashboardsByNameContainsIgnoringCase("stub");
-        verify(dashboardClient).archiveDashboard("stub");
+        verify(dashboardClient).archiveDashboard(1);
         verify(queryService).archive(any());
     }
 
