@@ -19,11 +19,18 @@ package com.epam.digital.data.platform.report.pipeline.impl;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
+import com.epam.digital.data.platform.report.exception.QueryNotFoundException;
+import com.epam.digital.data.platform.report.exception.QueryPublishingException;
+import com.epam.digital.data.platform.report.model.Context;
+import com.epam.digital.data.platform.report.model.Query;
+import com.epam.digital.data.platform.report.model.Visualization;
 import com.epam.digital.data.platform.report.pipeline.AbstractPipeline;
 import com.epam.digital.data.platform.report.pipeline.PipelineOrder;
 import com.epam.digital.data.platform.report.service.QueryService;
+import com.epam.digital.data.platform.report.util.IOUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,10 +43,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import com.epam.digital.data.platform.report.model.Context;
-import com.epam.digital.data.platform.report.model.Query;
-import com.epam.digital.data.platform.report.model.Visualization;
-import com.epam.digital.data.platform.report.util.IOUtils;
 
 @Order(PipelineOrder.UTIL_QUERY_PIPELINE)
 @Component
@@ -58,15 +61,50 @@ public class UtilQueryPipeline extends AbstractPipeline {
   }
 
   public void process(List<File> files, Context context) {
-    log.info("Processing parameter queries for dataSource with id {}", context.getDataSourceId());
-    var queries = getUtilQueries(files);
+    log.info("Processing parameter queries for dataSource with id {}",
+        context.getDataSourceId());
+    var utilQueries = getUtilQueries(files);
+    var buffer = new ArrayList<>(utilQueries);
 
-    queryService.archive(queries);
-    var saved = queryService.save(visualizationsByQuery(queries), context);
-    queryService.publish(saved);
-    queryService.execute(saved);
+    queryService.archive(utilQueries);
 
-    context.setMappedIds(mapToNewIds(saved, queries));
+    while (!buffer.isEmpty()) {
+      var queriesForPublishing = getQueriesThatCanBePublished(buffer, context);
+      if (queriesForPublishing.isEmpty()) {
+        var notPublished = buffer.stream().map(Query::getId).collect(Collectors.toSet());
+        throw new QueryPublishingException("Queries '" + notPublished + "' cannot be published "
+            + "because they have a circular dependency or depend on other queries that "
+            + "are not in the file with queries");
+      }
+      var saved = queryService.save(visualizationsByQuery(queriesForPublishing), context);
+      queryService.publish(saved);
+
+      context.addMappedIds(mapToNewIds(saved, utilQueries));
+      buffer.removeAll(queriesForPublishing);
+    }
+  }
+
+  private List<Query> getQueriesThatCanBePublished(List<Query> queries, Context context) {
+    List<Query> result = new ArrayList<>();
+    for (var query : queries) {
+      var params = (List<Map<String, Object>>) query.getOptions().get("parameters");
+
+      if (params.isEmpty()) {
+        result.add(query);
+        continue;
+      }
+      Set<Integer> subQueryIds = new HashSet<>();
+      for (var parameter : params) {
+        var subQueryId = parameter.get("queryId");
+        if (subQueryId != null) {
+          subQueryIds.add((Integer) subQueryId);
+        }
+      }
+      if (context.getMappedIds().keySet().containsAll(subQueryIds)) {
+        result.add(query);
+      }
+    }
+    return result;
   }
 
   public boolean isApplicable(List<File> files) {
@@ -77,9 +115,16 @@ public class UtilQueryPipeline extends AbstractPipeline {
     var queries = getQueries(files);
     var utilIds = getUtilQueryIds(queries);
 
-    return queries.stream()
+    List<Query> utilQueries = queries.stream()
         .filter(query -> utilIds.contains(query.getId()))
         .collect(toList());
+    
+    if(utilQueries.size() != utilIds.size()) {
+      var allQueryIds = queries.stream().map(Query::getId).collect(Collectors.toSet());
+      utilIds.removeAll(allQueryIds);
+      throw new QueryNotFoundException("Queries with id " + utilIds + " not found");
+    }
+    return utilQueries;
   }
 
   private Set<Integer> getUtilQueryIds(List<Query> queries) {

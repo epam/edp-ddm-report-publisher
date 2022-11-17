@@ -41,9 +41,6 @@ public interface DashboardClient {
     @GetMapping("/api/dashboards")
     ResponseEntity<Page<Dashboard>> findDashboardsByNameContainsIgnoringCase(@RequestParam("q") String name);
 
-    @GetMapping("/api/dashboards/{slug}")
-    ResponseEntity<Dashboard> getDashboardBySlug(@PathVariable("slug") String slug);
-
-    @DeleteMapping("/api/dashboards/{slug}")
-    ResponseEntity<Void> archiveDashboard(@PathVariable("slug") String slug);
+    @DeleteMapping("/api/dashboards/{id}")
+    ResponseEntity<Void> archiveDashboard(@PathVariable("id") int id);
 }
