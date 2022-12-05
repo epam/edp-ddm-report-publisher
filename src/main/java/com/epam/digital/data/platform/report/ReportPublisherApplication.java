@@ -118,7 +118,7 @@ public class ReportPublisherApplication implements ApplicationRunner {
     List<DataSource> dataSources = handleResponse(dataSourceClient.getDataSources());
 
     for (File reportsDir : getDirectories(appProperties.getReportsDirectoryName())) {
-      log.info("Processing {} directory", reportsDir.getName());
+      log.info("Processing directory '{}'", reportsDir.getName());
 
       getDataSource(dataSources, reportsDir.getName())
           .ifPresent(dataSourceId -> {
@@ -139,7 +139,7 @@ public class ReportPublisherApplication implements ApplicationRunner {
 
   private void handleExcerpts() {
     for (File templateDir : getDirectories(appProperties.getExcerptsDirectoryName())) {
-      log.info("Processing {} directory", templateDir.getName());
+      log.info("Processing directory '{}'", templateDir.getName());
       excerptService.loadDir(templateDir);
     }
   }
@@ -147,11 +147,11 @@ public class ReportPublisherApplication implements ApplicationRunner {
   private void handleExcerptsDocx() {
     var directory = FileUtils.getFile(appProperties.getExcerptsDocxDirectoryName());
     if(!directory.exists()) {
-      log.error("Directory {} does not exist", directory);
+      log.error("Directory '{}' does not exist", directory);
       return;
     }
     for (File templateFile : getFiles(directory)) {
-      log.info("Processing {} file", templateFile.getName());
+      log.info("Processing file '{}'", templateFile.getName());
       getExcerptDocxService().processFile(templateFile);
     }
   }
@@ -159,11 +159,11 @@ public class ReportPublisherApplication implements ApplicationRunner {
   private void handleExcerptsCsv() {
     var directory = FileUtils.getFile(appProperties.getExcerptsCsvDirectoryName());
     if(!directory.exists()) {
-      log.error("Directory {} does not exist", directory);
+      log.error("Directory '{}' does not exist", directory);
       return;
     }
     for (File templateFile : getFiles(directory)) {
-      log.info("Processing {} file", templateFile.getName());
+      log.info("Processing file '{}'", templateFile.getName());
       getExcerptCsvService().processFile(templateFile);
     }
   }
@@ -203,7 +203,7 @@ public class ReportPublisherApplication implements ApplicationRunner {
 
   private List<File> getDirectories(String root) {
     if(!FileUtils.getFile(root).exists()) {
-      log.error("Directory {} does not exist", root);
+      log.error("Directory '{}' does not exist", root);
       return Collections.emptyList();
     }
     return Arrays.stream(getFileList(FileUtils.getFile(root)))

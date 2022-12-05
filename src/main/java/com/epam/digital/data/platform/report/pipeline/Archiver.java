@@ -61,12 +61,15 @@ public class Archiver {
 
         if (dashboards.size() > 1) {
             log.warn(
-                "Found more than 1 dashboard by name \"{}\". Only first one to be archived.", name);
+                "Found more than 1 dashboard by name '{}'. Only first one to be archived.", name);
         }
 
         dashboards.stream()
             .findFirst()
-            .map(Dashboard::getId)
+            .map(dashboard -> {
+                log.info("Archiving dashboard: id = {}, name = '{}'", dashboard.getId(), name);
+                return dashboard.getId();
+            })
             .ifPresent(d -> handleResponse(dashboardClient.archiveDashboard(d)));
     }
 

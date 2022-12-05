@@ -16,20 +16,23 @@
 
 package com.epam.digital.data.platform.report.service;
 
-import static java.util.stream.Collectors.toSet;
 import static com.epam.digital.data.platform.report.util.ResponseHandler.handleResponse;
+import static java.util.stream.Collectors.toSet;
 
+import com.epam.digital.data.platform.report.client.QueryClient;
+import com.epam.digital.data.platform.report.model.Context;
+import com.epam.digital.data.platform.report.model.Page;
+import com.epam.digital.data.platform.report.model.Query;
+import com.epam.digital.data.platform.report.model.Visualization;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import com.epam.digital.data.platform.report.client.QueryClient;
-import com.epam.digital.data.platform.report.model.Context;
-import com.epam.digital.data.platform.report.model.Query;
-import com.epam.digital.data.platform.report.model.Visualization;
 
 @Service
 public class QueryService {
@@ -62,10 +65,26 @@ public class QueryService {
 
     public void archive(List<Query> queries) {
         for (String name : getQueryNames(queries)) {
-            var response = handleResponse(queryClient.getQueries(name));
+            log.info("Processing query '{}'", name);
+            int page = 0;
+            List<Query> foundQueries = new ArrayList<>();
+            Page<Query> response;
+            do {
+                response = handleResponse(queryClient.getQueries(name, ++page));
+                foundQueries.addAll(response.getResults());
+            } while (page * response.getPageSize() < response.getCount());
 
-            response.getResults().stream()
-                .map(Query::getId)
+            log.info("Found {} queries: {}", foundQueries.size(),
+                foundQueries.stream()
+                    .map(q -> "(id = " + q.getId() + ", name = '" + q.getName() + "')")
+                    .collect(Collectors.toList()));
+
+            foundQueries.stream()
+                .filter(query -> query.getName().equals(name))
+                .map(query -> {
+                    log.info("Archiving query: id = {}, name = '{}'", query.getId(), name);
+                    return query.getId();
+                })
                 .forEach(q -> handleResponse(queryClient.archiveQuery(q)));
         }
     }
@@ -81,9 +100,10 @@ public class QueryService {
         Map<Query, List<Visualization>> created = new HashMap<>();
 
         for (Query query : queryToVisualizations.keySet()) {
-            log.info("Processing query {}", query.getName());
+            log.info("Publishing query '{}'", query.getName());
             prepareQuery(query, context);
             Query published = handleResponse(queryClient.postQuery(query));
+            log.info("Query was published with id = {}", published.getId());
             created.put(published, queryToVisualizations.get(query));
         }
 

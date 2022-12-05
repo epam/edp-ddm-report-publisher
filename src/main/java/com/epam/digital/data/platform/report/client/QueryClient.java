@@ -41,7 +41,7 @@ public interface QueryClient {
     ResponseEntity<String> executeQuery(@PathVariable("id") int id);
 
     @GetMapping("/api/queries")
-    ResponseEntity<Page<Query>> getQueries(@RequestParam("q") String name);
+    ResponseEntity<Page<Query>> getQueries(@RequestParam("q") String name, @RequestParam("page") int page);
 
     @DeleteMapping("/api/queries/{id}")
     ResponseEntity<Void> archiveQuery(@PathVariable("id") int id);
