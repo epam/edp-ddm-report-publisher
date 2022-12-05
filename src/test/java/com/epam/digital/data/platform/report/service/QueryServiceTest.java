@@ -87,11 +87,24 @@ public class QueryServiceTest {
     @Test
     void shouldArchiveQueries() {
         when(queryClient.archiveQuery(anyInt())).thenReturn(mockResponse(Void.class));
-        when(queryClient.getQueries(any())).thenReturn(mockPageResponse());
+        when(queryClient.getQueries(any(), anyInt())).thenReturn(mockPageResponse());
 
         instance.archive(new ArrayList<>(queries("first", "second")));
 
-        verify(queryClient, times(2)).getQueries(any());
+        verify(queryClient, times(2)).getQueries(any(), anyInt());
+        verify(queryClient, times(2)).archiveQuery(anyInt());
+    }
+
+    @Test
+    void shouldCollectQueriesFromThreePages() {
+        when(queryClient.archiveQuery(anyInt())).thenReturn(mockResponse(Void.class));
+        when(queryClient.getQueries("first", 1)).thenReturn(mockPageResponse("first-abc"));
+        when(queryClient.getQueries("first", 2)).thenReturn(mockPageResponse("first"));
+        when(queryClient.getQueries("first", 3)).thenReturn(mockPageResponse("first"));
+
+        instance.archive(new ArrayList<>(queries("first")));
+
+        verify(queryClient, times(3)).getQueries(any(), anyInt());
         verify(queryClient, times(2)).archiveQuery(anyInt());
     }
 
@@ -105,10 +118,26 @@ public class QueryServiceTest {
 
     private ResponseEntity<Page<Query>> mockPageResponse() {
         var page = new Page<Query>();
+        page.setCount(2);
+        page.setPageSize(25);
+        var query1 = new Query();
+        query1.setId(1);
+        query1.setName("first");
+        var query2 = new Query();
+        query2.setId(1);
+        query2.setName("second");
+        page.setResults(List.of(query1, query2));
+        return new ResponseEntity<>(page, HttpStatus.OK);
+    }
+
+    private ResponseEntity<Page<Query>> mockPageResponse(String name) {
+        var page = new Page<Query>();
+        page.setCount(3);
+        page.setPageSize(1);
         var query = new Query();
         query.setId(1);
+        query.setName(name);
         page.setResults(List.of(query));
-
         return new ResponseEntity<>(page, HttpStatus.OK);
     }
 
