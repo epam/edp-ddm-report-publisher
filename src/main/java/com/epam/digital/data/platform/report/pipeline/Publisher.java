@@ -55,7 +55,7 @@ public class Publisher {
     public void publish(Dashboard dashboard, Context context) {
         Dashboard created = createDashboard(dashboard);
         dashboard.setId(created.getId());
-        log.info("Created new dashboard {} with id {}", created.getName(), created.getId());
+        log.info("Created new dashboard '{}' with id = {}", created.getName(), created.getId());
 
         processQueries(visualizationsByQuery(dashboard), context);
 
