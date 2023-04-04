@@ -58,7 +58,7 @@ public class PublisherTest {
 
     @Test
     void shouldPublishDashboard() {
-        var input = dashboard("stub");
+        var input = dashboard(1, "stub");
         var created = mockResponse();
         when(dashboardClient.createDashboard(any())).thenReturn(created);
         when(dashboardClient.updateDashboard(anyInt(), any())).thenReturn(created);

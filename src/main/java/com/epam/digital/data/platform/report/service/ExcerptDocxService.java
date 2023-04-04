@@ -70,7 +70,7 @@ public class ExcerptDocxService {
   }
 
   private void extractContentAndSaveToCeph(File file) {
-    try (var fis = new FileInputStream(file.getPath());
+    try (var fis = new FileInputStream(file.getPath()); //NOSONAR
         var zipIn = new ZipInputStream(fis);
         ZipFile zipFile = new ZipFile(file)) {
       ZipEntry entry = zipIn.getNextEntry();
