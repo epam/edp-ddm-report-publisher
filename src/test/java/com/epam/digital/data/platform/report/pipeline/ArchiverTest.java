@@ -21,7 +21,6 @@ import static com.epam.digital.data.platform.report.util.TestUtils.mockVoidRespo
 import static java.util.List.of;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -54,28 +53,21 @@ public class ArchiverTest {
 
     @Test
     void shouldSuccessfullyArchiveDashboardAndQueries() {
-        ResponseEntity<Page<Dashboard>> dashboardResponse = mockDashboardResponse(1,"stub");
-        ResponseEntity<Page<Dashboard>> dashboardResponse2 = mockDashboardResponse(2, "stub2");
+        ResponseEntity<Page<Dashboard>> dashboardResponse = mockDashboardResponse();
 
-        when(dashboardClient.findAllDashboards(1)).thenReturn(dashboardResponse);
-        when(dashboardClient.findAllDashboards(2)).thenReturn(dashboardResponse2);
+        when(dashboardClient.findDashboardsByNameContainsIgnoringCase(any())).thenReturn(dashboardResponse);
         when(dashboardClient.archiveDashboard(anyInt())).thenReturn(mockVoidResponse());
 
-        instance.archiveAll();
+        instance.archive(dashboard("stub"));
 
-        verify(dashboardClient).findAllDashboards(1);
-        verify(dashboardClient).findAllDashboards(2);
+        verify(dashboardClient).findDashboardsByNameContainsIgnoringCase("stub");
         verify(dashboardClient).archiveDashboard(1);
-        verify(dashboardClient).archiveDashboard(2);
-        verify(queryService, times(2)).archive(any());
+        verify(queryService).archive(any());
     }
 
-    private ResponseEntity<Page<Dashboard>> mockDashboardResponse(int counter, String dashboardName) {
+    private ResponseEntity<Page<Dashboard>> mockDashboardResponse() {
         Page<Dashboard> page = new Page<>();
-        page.setPage(counter);
-        page.setPageSize(1);
-        page.setCount(2);
-        page.setResults(of(dashboard(counter, dashboardName)));
+        page.setResults(of(dashboard("stub")));
 
         return ResponseEntity.status(200)
             .body(page);

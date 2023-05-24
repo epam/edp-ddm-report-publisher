@@ -22,6 +22,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.epam.digital.data.platform.report.client.WidgetClient;
+import com.epam.digital.data.platform.report.model.Widget;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,14 +46,14 @@ public class WidgetServiceTest {
 
     @Test
     void shouldSaveWidgets() {
-        when(widgetClient.createWidget(any())).thenReturn(mockResponse());
+        when(widgetClient.createWidget(any())).thenReturn(mockResponse(Widget.class));
 
-        instance.save(dashboard(1, "stub"));
+        instance.save(dashboard("stub"));
 
         verify(widgetClient).createWidget(any());
     }
 
-    private <T> ResponseEntity<T> mockResponse() {
+    private <T> ResponseEntity<T> mockResponse(Class<T> clazz) {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
