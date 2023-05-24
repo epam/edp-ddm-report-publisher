@@ -52,8 +52,8 @@ public class TestUtils {
     return visualization(type, 1);
   }
 
-  public static Dashboard dashboard(int id, String name) {
-    var dashboard = dashboard(name, id);
+  public static Dashboard dashboard(String name) {
+    var dashboard = dashboard(name, 1);
     var widget = widget("text");
     var visualization = visualization(VISUALIZATION_TABLE_TYPE);
     var query = query("query name");

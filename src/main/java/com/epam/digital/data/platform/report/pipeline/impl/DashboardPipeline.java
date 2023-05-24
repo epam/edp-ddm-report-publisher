@@ -52,9 +52,9 @@ public class DashboardPipeline extends AbstractPipeline {
     }
 
     public void process(List<File> files, Context context) {
-        archiver.archiveAll();
         for (Dashboard dashboard : getDashboards(files)) {
-            log.info("Publishing dashboard '{}'", dashboard.getName());
+            log.info("Processing dashboard '{}'", dashboard.getName());
+            archiver.archive(dashboard);
             publisher.publish(dashboard, context);
         }
     }

@@ -19,15 +19,10 @@ package com.epam.digital.data.platform.report.pipeline;
 import static java.util.stream.Collectors.toList;
 import static com.epam.digital.data.platform.report.util.ResponseHandler.handleResponse;
 
-import com.epam.digital.data.platform.report.model.Page;
 import com.epam.digital.data.platform.report.service.QueryService;
-
-import java.util.Collection;
 import java.util.List;
 
 import java.util.Objects;
-import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -50,24 +45,40 @@ public class Archiver {
         this.queryService = queryService;
     }
 
-    public void archiveAll() {
-        int page = 0;
-        Page<Dashboard> dashboardsPageResponse;
-        do {
-            page++;
-            dashboardsPageResponse = handleResponse(dashboardClient.findAllDashboards(page));
-            dashboardsPageResponse.getResults()
-                    .forEach(dashboard -> {
-                        log.info("Archiving dashboard: id = {}, name = '{}'", dashboard.getId(), dashboard.getName());
-                        handleResponse(dashboardClient.archiveDashboard(dashboard.getId()));
-                        queryService.archive(getQueries(dashboard));
-                    });
-        } while (page * dashboardsPageResponse.getPageSize() < dashboardsPageResponse.getCount());
+    public void archive(Dashboard dashboard) {
+        archiveDashboard(dashboard.getName());
+        archiveQueries(getQueries(dashboard));
+        log.info("Successfully archived {}", dashboard.getName());
+    }
+
+    private void archiveDashboard(String name) {
+        var found =
+            handleResponse(dashboardClient.findDashboardsByNameContainsIgnoringCase(name));
+
+        var dashboards = found.getResults().stream()
+            .filter(d -> name.equals(d.getName()))
+            .collect(toList());
+
+        if (dashboards.size() > 1) {
+            log.warn(
+                "Found more than 1 dashboard by name '{}'. Only first one to be archived.", name);
+        }
+
+        dashboards.stream()
+            .findFirst()
+            .map(dashboard -> {
+                log.info("Archiving dashboard: id = {}, name = '{}'", dashboard.getId(), name);
+                return dashboard.getId();
+            })
+            .ifPresent(d -> handleResponse(dashboardClient.archiveDashboard(d)));
+    }
+
+    private void archiveQueries(List<Query> queries) {
+        queryService.archive(queries);
     }
 
     private List<Query> getQueries(Dashboard dashboard) {
-        return Optional.ofNullable(dashboard.getWidgets()).stream()
-            .flatMap(Collection::stream)
+        return dashboard.getWidgets().stream()
             .map(Widget::getVisualization)
             .filter(Objects::nonNull)
             .map(Visualization::getQuery)

@@ -31,15 +31,15 @@ import com.epam.digital.data.platform.report.model.Page;
 @FeignClient(name = "dashboard", url = "${redash.url}", configuration = FeignConfig.class)
 public interface DashboardClient {
 
-    @GetMapping("/api/dashboards")
-    ResponseEntity<Page<Dashboard>> findAllDashboards(@RequestParam("page") int page);
-
     @PostMapping("/api/dashboards")
     ResponseEntity<Dashboard> createDashboard(@RequestBody Dashboard dashboard);
 
     @PostMapping("/api/dashboards/{id}")
     ResponseEntity<Dashboard> updateDashboard(@PathVariable("id") int id,
         @RequestBody Dashboard dashboard);
+
+    @GetMapping("/api/dashboards")
+    ResponseEntity<Page<Dashboard>> findDashboardsByNameContainsIgnoringCase(@RequestParam("q") String name);
 
     @DeleteMapping("/api/dashboards/{id}")
     ResponseEntity<Void> archiveDashboard(@PathVariable("id") int id);

@@ -39,8 +39,8 @@ public class UserService {
 
   public void createUser(Role role) {
     try (Connection connection = dataSource.getConnection();
-        PreparedStatement statement = connection.prepareCall(CREATE_ROLE)) { //NOSONAR
-      statement.setString(1, buildUserNameFor(role.getName())); //NOSONAR
+        PreparedStatement statement = connection.prepareCall(CREATE_ROLE)) {
+      statement.setString(1, buildUserNameFor(role.getName()));
       statement.setString(2, role.getPassword());
       statement.execute();
     } catch (SQLException e) {
@@ -50,8 +50,8 @@ public class UserService {
 
   public void deleteUser(Group group) {
     try (Connection connection = dataSource.getConnection();
-        PreparedStatement statement = connection.prepareCall(DELETE_ROLE)) { //NOSONAR
-      statement.setString(1, buildUserNameFor(group.getName())); //NOSONAR
+        PreparedStatement statement = connection.prepareCall(DELETE_ROLE)) {
+      statement.setString(1, buildUserNameFor(group.getName()));
       statement.execute();
     } catch (SQLException e) {
       throw new DatabaseUserException("Could not drop user", e);

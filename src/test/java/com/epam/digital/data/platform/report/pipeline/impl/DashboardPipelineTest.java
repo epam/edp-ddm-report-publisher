@@ -52,18 +52,18 @@ public class DashboardPipelineTest {
 
         dashboardPipeline.process(files, context());
 
-        verify(archiver).archiveAll();
+        verify(archiver).archive(any());
         verify(publisher).publish(any(), any());
     }
 
     @Test
-    void shouldNotPublishDashboardIfNoneFound() throws FileNotFoundException {
+    void shouldNotArchiveAndPublishDashboardIfNoneFound() throws FileNotFoundException {
         var dashboard = ResourceUtils.getFile("classpath:pipeline");
         var files = of(dashboard);
 
         dashboardPipeline.process(files, context());
 
-        verify(archiver).archiveAll();
+        verify(archiver, times(0)).archive(any());
         verify(publisher, times(0)).publish(any(), any());
     }
 }
