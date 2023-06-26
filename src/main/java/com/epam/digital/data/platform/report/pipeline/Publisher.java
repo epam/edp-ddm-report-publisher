@@ -75,6 +75,7 @@ public class Publisher {
     private Set<Query> processQueries(Map<Query, List<Visualization>> queries, Context context) {
         var saved = queryService.save(queries, context);
         queryService.publish(saved);
+        queryService.execute(saved);
         return saved;
     }
 

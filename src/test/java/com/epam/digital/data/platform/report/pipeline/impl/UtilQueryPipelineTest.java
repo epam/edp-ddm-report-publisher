@@ -16,27 +16,32 @@
 
 package com.epam.digital.data.platform.report.pipeline.impl;
 
-import static com.epam.digital.data.platform.report.util.TestUtils.context;
-import static java.util.List.of;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-
 import com.epam.digital.data.platform.report.config.TestConfig;
 import com.epam.digital.data.platform.report.exception.QueryPublishingException;
 import com.epam.digital.data.platform.report.model.Context;
 import com.epam.digital.data.platform.report.model.Query;
 import com.epam.digital.data.platform.report.service.QueryService;
-import java.io.IOException;
-import java.util.Map;
+import feign.FeignException;
+import net.bytebuddy.utility.RandomString;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.util.ResourceUtils;
+
+import java.io.IOException;
+import java.util.Map;
+
+import static com.epam.digital.data.platform.report.util.TestUtils.context;
+import static java.util.List.of;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 
 @SpringBootTest(classes = {UtilQueryPipeline.class})
 @Import(TestConfig.class)
@@ -48,7 +53,7 @@ class UtilQueryPipelineTest {
   private UtilQueryPipeline utilQueryPipeline;
 
   @Test
-  void shouldSuccessfullyArchiveAndPublishDashboard() throws IOException {
+  void shouldSuccessfullyArchiveAndPublishDashboardAndExecuteQueries() throws IOException {
     var dir = ResourceUtils.getFile("classpath:pipeline/officer/queries");
     var files = of(dir);
 
@@ -57,6 +62,25 @@ class UtilQueryPipelineTest {
     verify(queryService).archive(any());
     verify(queryService).save(any(), any());
     verify(queryService).publish(any());
+    verify(queryService).execute(any());
+  }
+
+  @Test
+  void shouldThrowExceptionIfItsNotMissingParameter() throws IOException {
+    var dir = ResourceUtils.getFile("classpath:pipeline/officer/queries");
+    var files = of(dir);
+
+    var exception = Mockito.mock(FeignException.class);
+    var exMessage = RandomString.make();
+    Mockito.when(exception.getMessage()).thenReturn(exMessage);
+    Mockito.doThrow(exception).when(queryService).execute(any());
+    Assertions.assertThatThrownBy(() -> utilQueryPipeline.process(files, context()))
+            .isInstanceOf(FeignException.class)
+            .hasMessage(exMessage);
+
+    verify(queryService).archive(any());
+    verify(queryService).save(any(), any());
+    verify(queryService).execute(any());
   }
 
   @Nested
