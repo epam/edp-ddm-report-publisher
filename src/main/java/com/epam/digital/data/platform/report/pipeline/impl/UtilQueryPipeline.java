@@ -47,7 +47,6 @@ import org.springframework.stereotype.Component;
 @Order(PipelineOrder.UTIL_QUERY_PIPELINE)
 @Component
 public class UtilQueryPipeline extends AbstractPipeline {
-
   private final Logger log = LoggerFactory.getLogger(UtilQueryPipeline.class);
 
   private final QueryService queryService;
@@ -78,6 +77,7 @@ public class UtilQueryPipeline extends AbstractPipeline {
       }
       var saved = queryService.save(visualizationsByQuery(queriesForPublishing), context);
       queryService.publish(saved);
+      queryService.execute(saved);
 
       context.addMappedIds(mapToNewIds(saved, utilQueries));
       buffer.removeAll(queriesForPublishing);

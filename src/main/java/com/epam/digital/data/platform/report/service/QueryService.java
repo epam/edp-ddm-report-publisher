@@ -30,12 +30,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class QueryService {
+    public static final String MISSING_PARAMETER_ON_QUERY_PREPOPULATION_ERROR_PREFIX = "Missing parameter value for:";
 
     private final QueryClient queryClient;
     private final VisualizationService visualizationService;
@@ -60,7 +63,17 @@ public class QueryService {
     }
 
     public void execute(Set<Query> queries) {
-        queries.forEach(query -> queryClient.executeQuery(query.getId()));
+        queries.forEach(query -> {
+            try {
+                queryClient.executeQuery(query.getId());
+                log.info("Executed query {}", query.getName());
+            } catch (FeignException e) {
+                if(!e.getMessage().contains(MISSING_PARAMETER_ON_QUERY_PREPOPULATION_ERROR_PREFIX)) {
+                    throw e;
+                }
+                log.warn("Couldn't execute query, error: {}", e.getMessage());
+            }
+        });
     }
 
     public void archive(List<Query> queries) {

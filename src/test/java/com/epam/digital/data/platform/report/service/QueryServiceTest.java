@@ -16,6 +16,7 @@
 
 package com.epam.digital.data.platform.report.service;
 
+import static com.epam.digital.data.platform.report.service.QueryService.MISSING_PARAMETER_ON_QUERY_PREPOPULATION_ERROR_PREFIX;
 import static com.epam.digital.data.platform.report.util.TestUtils.queries;
 import static com.epam.digital.data.platform.report.util.TestUtils.query;
 import static com.epam.digital.data.platform.report.util.TestUtils.visualization;
@@ -30,13 +31,18 @@ import com.epam.digital.data.platform.report.model.Page;
 import com.epam.digital.data.platform.report.model.Query;
 import com.epam.digital.data.platform.report.model.Visualization;
 import com.epam.digital.data.platform.report.util.TestUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import feign.FeignException;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -82,6 +88,14 @@ public class QueryServiceTest {
         instance.execute(queries("first", "second"));
 
         verify(queryClient, times(2)).executeQuery(anyInt());
+    }
+
+    @Test
+    void shouldSkipErrorsRelatedToMissingParams() {
+        var exception = Mockito.mock(FeignException.class);
+        Mockito.when(exception.getMessage()).thenReturn(MISSING_PARAMETER_ON_QUERY_PREPOPULATION_ERROR_PREFIX);
+        Mockito.doThrow(exception).when(queryClient).executeQuery(anyInt());
+        Assertions.assertThatCode(() -> instance.execute(queries("first", "second"))).doesNotThrowAnyException();
     }
 
     @Test
