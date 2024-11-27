@@ -22,7 +22,8 @@ import com.epam.digital.data.platform.report.model.Group;
 import com.epam.digital.data.platform.report.model.Role;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.PostConstruct;
+import java.util.Optional;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,7 @@ public class RoleService {
   public static final String AUDITOR_ROLE_NAME = "auditor";
   public static final String ADMIN_ROLE_NAME = "admin";
   public static final String ADMIN_REGISTRY_NAME = "registry";
+  public static final String REDASH_ADMIN_ROLE_NAME = "redash-admin";
 
   private final Logger log = LoggerFactory.getLogger(RoleService.class);
 
@@ -43,9 +45,6 @@ public class RoleService {
   private final DataSourceService dataSourceService;
 
   private final Map<String, String> rolePasswordMap = new HashMap<>();
-
-  private Group defaultGroup;
-  private Group adminGroup;
 
   public RoleService(
       @Value("${PWD_ADMIN}") String adminPassword,
@@ -61,26 +60,6 @@ public class RoleService {
     this.rolePasswordMap.put(AUDITOR_ROLE_NAME, auditorPassword);
   }
 
-  @PostConstruct
-  void setup() {
-    setDefaultGroup();
-    setAdminGroup();
-  }
-
-  private void setDefaultGroup() {
-    defaultGroup = groupService.getGroups().stream()
-        .filter(group -> group.getName().contains("default"))
-        .findFirst()
-        .orElseThrow(() -> new NoGroupFoundException("No default group found"));
-  }
-
-  private void setAdminGroup() {
-    adminGroup = groupService.getGroups().stream()
-        .filter(group -> group.getName().contains("admin"))
-        .findFirst()
-        .orElseThrow(() -> new NoGroupFoundException("No default group found"));
-  }
-
   public void createAuditorGroup() {
     if (!isGroupCreated(AUDITOR_ROLE_NAME)) {
       log.info("Creating auditor group and datasource");
@@ -93,13 +72,16 @@ public class RoleService {
 
       var createdGroup = groupService.createGroup(group);
       var createdDataSource = dataSourceService.createDataSource(dataSource);
-      groupService.deleteAssociation(defaultGroup, createdDataSource);
-      groupService.associate(createdDataSource, createdGroup, adminGroup);
+      groupService.associate(createdDataSource, createdGroup);
     }
   }
 
   public void createAdminRegistry() {
-    if (!isDataSourceCreated()) {
+    var redashAdminGroup = groupService.getGroup(new Role(REDASH_ADMIN_ROLE_NAME))
+            .orElseThrow(() -> new NoGroupFoundException(REDASH_ADMIN_ROLE_NAME));
+    DataSource adminDataSource;
+    var existingAdminDataSourceOpt = getAdminDataSource();
+    if (existingAdminDataSourceOpt.isEmpty()) {
       log.info("Creating admin datasource");
 
       var role = new Role(ADMIN_ROLE_NAME);
@@ -108,8 +90,11 @@ public class RoleService {
       var dataSource = dataSourceService.buildDataSource(role);
       dataSource.setName(ADMIN_REGISTRY_NAME);
 
-      dataSourceService.createDataSource(dataSource);
+      adminDataSource = dataSourceService.createDataSource(dataSource);
+    } else {
+      adminDataSource = existingAdminDataSourceOpt.get();
     }
+    groupService.associate(adminDataSource, redashAdminGroup);
   }
 
   public void create(Role role) {
@@ -136,14 +121,13 @@ public class RoleService {
     var createdGroup = groupService.createGroup(group);
     userService.createUser(role);
     var createdDataSource = dataSourceService.createDataSource(dataSource);
-    groupService.deleteAssociation(defaultGroup, createdDataSource);
-    groupService.associate(createdDataSource, createdGroup, adminGroup);
+    groupService.associate(createdDataSource, createdGroup);
   }
 
-  private boolean isDataSourceCreated() {
+  private Optional<DataSource> getAdminDataSource() {
     return dataSourceService.getDataSources().stream()
-        .map(DataSource::getName)
-        .anyMatch(name -> name.equals(ADMIN_REGISTRY_NAME));
+        .filter(dataSource -> dataSource.getName().equals(ADMIN_REGISTRY_NAME))
+        .findFirst();
   }
 
   private boolean isGroupCreated(String role) {

@@ -62,7 +62,4 @@ public class GroupService {
     }
   }
 
-  public void deleteAssociation(Group group, DataSource dataSource) {
-    client.deleteAssociationGroupWithDataSource(group.getId(), dataSource.getId());
-  }
 }

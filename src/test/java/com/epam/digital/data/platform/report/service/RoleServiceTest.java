@@ -16,11 +16,9 @@
 
 package com.epam.digital.data.platform.report.service;
 
-import static com.epam.digital.data.platform.report.util.TestUtils.dataSources;
-import static com.epam.digital.data.platform.report.util.TestUtils.groups;
+import static com.epam.digital.data.platform.report.util.TestUtils.dataSource;
 import static java.util.Collections.emptyList;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -28,6 +26,8 @@ import static org.mockito.Mockito.when;
 import com.epam.digital.data.platform.report.model.DataSource;
 import com.epam.digital.data.platform.report.model.Group;
 import com.epam.digital.data.platform.report.model.Role;
+
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -69,7 +69,6 @@ public class RoleServiceTest {
     verify(dataSourceService, never()).buildDataSource(any());
     verify(dataSourceService, never()).createDataSource(any());
     verify(groupService, never()).createGroup(any());
-    verify(groupService, never()).deleteAssociation(any(), any());
     verify(groupService, never()).associate(any(), any());
   }
 
@@ -82,68 +81,55 @@ public class RoleServiceTest {
     verify(dataSourceService).buildDataSource(any());
     verify(dataSourceService).createDataSource(any());
     verify(groupService).createGroup(any());
-    verify(groupService).deleteAssociation(any(), any());
     verify(groupService).associate(any(), any());
   }
 
   @Test
   void shouldSkipAdminDataSourceCreationIfAdminAlreadyExists() {
-    when(dataSourceService.getDataSources()).thenReturn(dataSources("registry", "officer registry"));
+    var redashAdminGroup = new Group("redash-admin");
+    when(groupService.getGroup(any())).thenReturn(Optional.of(redashAdminGroup));
+    var registryDs = dataSource("registry", 1);
+    var officerRegistryDs = dataSource("officer registry", 2);
+    when(dataSourceService.getDataSources()).thenReturn(List.of(registryDs, officerRegistryDs));
 
     instance.createAdminRegistry();
 
     verify(dataSourceService, never()).buildDataSource(any());
     verify(dataSourceService, never()).createDataSource(any());
+    verify(groupService).associate(registryDs, redashAdminGroup);
   }
 
   @Test
   void shouldCreateAdminDataSource() {
+    var redashAdminGroup = new Group("redash-admin");
+    when(groupService.getGroup(any())).thenReturn(Optional.of(redashAdminGroup));
     when(dataSourceService.getDataSources()).thenReturn(emptyList());
     when(dataSourceService.buildDataSource(any())).thenReturn(new DataSource());
+    var createdDs = new DataSource();
+    when(dataSourceService.createDataSource(any())).thenReturn(createdDs);
 
     instance.createAdminRegistry();
 
     verify(dataSourceService).buildDataSource(any());
     verify(dataSourceService).createDataSource(any());
+    verify(groupService).associate(createdDs, redashAdminGroup);
   }
 
   @Test
   void shouldCreateRole() {
-    var groups = groups("admin", "default");
-    when(groupService.getGroups()).thenReturn(groups);
+    when(dataSourceService.buildDataSource(any())).thenReturn(new DataSource());
+    var createdGroup = new Group("officer");
+    when(groupService.createGroup(any())).thenReturn(createdGroup);
 
     var role = new Role();
     role.setName("officer");
 
-    instance.setup();
     instance.create(role);
 
     verify(dataSourceService).buildDataSource(role);
     verify(dataSourceService).createDataSource(any());
     verify(groupService).createGroup(any());
-    verify(groupService).deleteAssociation(any(), any());
     verify(groupService).associate(any(), any());
-    verify(userService).createUser(role);
-  }
-
-  @Test
-  void shouldAssociateWithAdminGroup() {
-    var groups = groups("admin", "default", "officer");
-    when(groupService.getGroups()).thenReturn(groups);
-    when(groupService.createGroup(any())).thenReturn(groups.get(2));
-
-    var role = new Role();
-    role.setName("officer");
-
-    instance.setup();
-    instance.create(role);
-
-    verify(dataSourceService).buildDataSource(role);
-    verify(dataSourceService).createDataSource(any());
-    verify(groupService).createGroup(any());
-    verify(groupService).deleteAssociation(any(), any());
-    verify(groupService).associate(any(), eq(groups.get(2)), eq(groups.get(0)));
-    verify(userService).createUser(role);
   }
 
   @Test

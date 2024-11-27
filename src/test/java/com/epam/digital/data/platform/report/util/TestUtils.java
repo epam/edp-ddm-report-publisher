@@ -151,7 +151,7 @@ public class TestUtils {
     return dashboard;
   }
 
-  private static DataSource dataSource(String name, int id) {
+  public static DataSource dataSource(String name, int id) {
     var dataSource = new DataSource();
 
     dataSource.setName(name);

@@ -125,20 +125,6 @@ public class GroupServiceTest {
     verify(client).associateGroupWithDataSource(1, association);
   }
 
-  @Test
-  void shouldDeleteAssociation() {
-    var group = new Group();
-    group.setName(GROUP_NAME);
-    group.setId(1);
-
-    var dataSource = new DataSource();
-    dataSource.setId(1);
-
-    instance.deleteAssociation(group, dataSource);
-
-    verify(client).deleteAssociationGroupWithDataSource(1, 1);
-  }
-
   private ResponseEntity<List<Group>> listResponse() {
     return new ResponseEntity<>(groups(GROUP_NAME), HttpStatus.OK);
   }

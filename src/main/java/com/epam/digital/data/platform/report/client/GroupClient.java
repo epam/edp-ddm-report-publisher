@@ -44,7 +44,4 @@ public interface GroupClient {
   ResponseEntity<Void> associateGroupWithDataSource(@PathVariable("id") int id,
       @RequestBody DataSourceAssociation dataSourceAssociation);
 
-  @DeleteMapping("/api/groups/{groupId}/data_sources/{dataSourceId}")
-  ResponseEntity<Void> deleteAssociationGroupWithDataSource(@PathVariable("groupId") int groupId,
-      @PathVariable("dataSourceId") int dataSourceId);
 }
